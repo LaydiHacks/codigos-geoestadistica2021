@@ -2,11 +2,8 @@
 library(rgdal)
 library(plotKML)
 
-# Indique debajo del directorio que contiene los archivos de mapa "powiaty"
-setwd("db/")
-
 mapaA <- readOGR("db/", "powiaty")
-#?C?mo se define la ubicaci?n de los v?rtices? Veamos p.e. los bordes del mapa (caja delimitadora) ...
+#?Como se define la ubicacion de los vertices? Veamos p.e. los bordes del mapa (caja delimitadora) ...
 mapaA@bbox
 #?Qu? significan estos n?meros?
 getCRS(mapaA)
@@ -52,7 +49,9 @@ plot(mapaB)
 #install.packages("mapproj")
 #install.packages("maps")
 #install.packages("ggplot2")
-library(maps); library(ggplot2); library(mapproj)
+library(maps)
+library(ggplot2)
+library(mapproj)
 states <- map_data("state")
 usamap <- ggplot(states, aes(x=long, y=lat, group=group)) +
   geom_polygon(fill="white", colour="black")
