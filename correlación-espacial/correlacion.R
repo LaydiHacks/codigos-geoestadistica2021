@@ -103,6 +103,8 @@ plot(cor)
 ################################
 
 Dist <- unlist(nbdists(col.kn5, coords))
+
+
 summary(Dist)
 max_k1 <- max(Dist)
 
