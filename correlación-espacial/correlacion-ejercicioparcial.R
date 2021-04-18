@@ -1,9 +1,9 @@
 ########################################################################
-############  SOLUCIÓN SEGUNDO PARCIAL GEOESTADISTICA 2014  ############
+############  SOLUCI?N SEGUNDO PARCIAL GEOESTADISTICA 2014  ############
 ########################################################################
 
 #save.image("D:/CARLOS/Estadistica Espacial/Geoestadistica/Parciales/p2014.I")
-load("D:/CARLOS/Estadistica Espacial/Geoestadistica/Parciales/p2014.I")
+#load("D:/CARLOS/Estadistica Espacial/Geoestadistica/Parciales/p2014.I")
 
 
 library(shapefiles)
@@ -25,16 +25,21 @@ poligonos <- data.frame(c(rep(1,nrow(P1)),rep(2,nrow(P2)),rep(3,nrow(P3)),rep(4,
 names(poligonos) <- c("Id","x","y")
 ddTable <- data.frame(Id=c(1,2,3,4,5,6),Name=c("P1","P2","P3","P4","P5","P6"))
 ddShapefile <- convert.to.shapefile(poligonos, ddTable, "Id", 5)
-write.shapefile(ddShapefile, "D:/CARLOS/Estadistica Espacial/Geoestadistica/Parciales/pol", arcgis=T)
+write.shapefile(ddShapefile, "db/pol", arcgis=T)
 
 library(spdep)
 library(maptools)
-par.poly1 <- readShapePoly("D:/CARLOS/Estadistica Espacial/Geoestadistica/Parciales/pol.shp")
+library(rgdal)
+par.poly1 <- readOGR("db", "pol")
+plot(par.poly1)
+
 # Contiguidad Efecto Reina: Orden 1 
 
 par_nbq1 <- poly2nb(par.poly1)
 par_nbr1 <- poly2nb(par.poly1,queen=F)           # torre
 e.lwq <- nb2listw(par_nbq1, style="W")
+
+library(spatialreg)
 W.q <- as.matrix(as_dgRMatrix_listw(e.lwq))
 e.lwr <- nb2listw(par_nbr1, style="W",zero.policy=T)  
 W.r <- as.matrix(as_dgRMatrix_listw(e.lwr))
