@@ -10,8 +10,8 @@ rm(list = ls())
 if(!is.null(dev.list())) dev.off()
 cat("\014")
 
-#save.image("D:/CARLOS/Econometria Espacial/Doctorado Economía UN/Clases/SAR")
-load("D:/CARLOS/Econometria Espacial/Doctorado Economía UN/Clases/SAR")
+#save.image("D:/CARLOS/Econometria Espacial/Doctorado Economï¿½a UN/Clases/SAR")
+load("D:/CARLOS/Econometria Espacial/Doctorado Economï¿½a UN/Clases/SAR")
    
 #####################################################
 # 0. ACCESO A LOS DATOS Y CALCULO PESOS ESPACIALES  #
@@ -30,7 +30,7 @@ library(pgirmess)
 library(rgdal)
 library(spatialreg)
 #library(RcmdrPlugin.epack)   #no cargar ya que:     
-# R tiene el molesto problema de que no permite cargar más de 100 DLL.
+# R tiene el molesto problema de que no permite cargar mï¿½s de 100 DLL.
 
 columbus <- sf::read_sf(system.file("etc/shapes/columbus.shp",package="spdep"))
 plot(columbus$geometry)
@@ -52,7 +52,7 @@ plot(columbus, border="blue")
 plot(col.nb.0.all, coords, add=TRUE)
 title(main=paste("Distance based neighbours 0-", format(all.linked), " distance units", sep=""))
 
-# Identificación vecinos
+# Identificaciï¿½n vecinos
 par(mai=c(0,0,0,0))
 set.seed(1)
 plot(columbus, col=sample(rainbow(500))[1:49])
@@ -81,27 +81,27 @@ l5 = list("sp.text", c(7.1,13.7), "500 m")
 spplot(col.poly["CRIME"], scales=list(draw=TRUE), col.regions=cm.colors(20),  sp.layout=list(l2,l3,l4,l5))
 # rainbow(n, start=.7, end=.1), heat.colors(n), terrain.colors(n), topo.colors(n), cm.colors(n)
 
-source("D:/CARLOS/Estadistica Espacial/Drive Estadistica Espacial/Datos Área/Funciones/northarrow.R")
-source("D:/CARLOS/Estadistica Espacial/Drive Estadistica Espacial/Datos Área/Funciones/scalebar.R")
-source("D:/CARLOS/Estadistica Espacial/Drive Estadistica Espacial/Datos Área/Funciones/moran.R")
-source("D:/CARLOS/Estadistica Espacial/Drive Estadistica Espacial/Datos Área/Funciones/geary.R")
-source("D:/CARLOS/Estadistica Espacial/Drive Estadistica Espacial/Datos Área/Funciones/moranbi.test.R")
-source("D:/CARLOS/Estadistica Espacial/Drive Estadistica Espacial/Datos Área/Funciones/randomize_vector.R")
-source("D:/CARLOS/Estadistica Espacial/Drive Estadistica Espacial/Datos Área/Funciones/moran.cluster.R")
-source("D:/CARLOS/Estadistica Espacial/Drive Estadistica Espacial/Datos Área/Funciones/moran.bi.R")
-source("D:/CARLOS/Estadistica Espacial/Drive Estadistica Espacial/Datos Área/Funciones/moran.cluster.R")
-source("D:/CARLOS/Estadistica Espacial/Drive Estadistica Espacial/Datos Área/Funciones/getis.cluster.R")
-source("D:/CARLOS/Estadistica Espacial/Drive Estadistica Espacial/Datos Área/Funciones/localmoran.bi.R")
-source("D:/CARLOS/Estadistica Espacial/Drive Estadistica Espacial/Datos Área/Funciones/moranbi.plot.R") 
-source("D:/CARLOS/Estadistica Espacial/Drive Estadistica Espacial/Datos Área/Funciones/quantile.e.R")
-source("D:/CARLOS/Estadistica Espacial/Drive Estadistica Espacial/Datos Área/Funciones/sp.na.omit.R")
-source("D:/CARLOS/Estadistica Espacial/Drive Estadistica Espacial/Datos Área/Funciones/correlogram.d.R")
-source("D:/CARLOS/Estadistica Espacial/Drive Estadistica Espacial/Datos Área/Funciones/sp.correlogram.R")
-source("D:/CARLOS/Estadistica Espacial/Drive Estadistica Espacial/Datos Área/Funciones/spcorrelogram.bi.R")
-source("D:/CARLOS/Estadistica Espacial/Drive Estadistica Espacial/Datos Área/Funciones/moran.bi1.R")
-source("D:/CARLOS/Estadistica Espacial/Drive Estadistica Espacial/Datos Área/Funciones/moranbi1.test.R")
-source("D:/CARLOS/Estadistica Espacial/Drive Estadistica Espacial/Datos Área/Funciones/geary.bi.R")
-source("D:/CARLOS/Estadistica Espacial/Drive Estadistica Espacial/Datos Área/Funciones/test.w.R")
+source("D:/CARLOS/Estadistica Espacial/Drive Estadistica Espacial/Datos ï¿½rea/Funciones/northarrow.R")
+source("D:/CARLOS/Estadistica Espacial/Drive Estadistica Espacial/Datos ï¿½rea/Funciones/scalebar.R")
+source("D:/CARLOS/Estadistica Espacial/Drive Estadistica Espacial/Datos ï¿½rea/Funciones/moran.R")
+source("D:/CARLOS/Estadistica Espacial/Drive Estadistica Espacial/Datos ï¿½rea/Funciones/geary.R")
+source("D:/CARLOS/Estadistica Espacial/Drive Estadistica Espacial/Datos ï¿½rea/Funciones/moranbi.test.R")
+source("D:/CARLOS/Estadistica Espacial/Drive Estadistica Espacial/Datos ï¿½rea/Funciones/randomize_vector.R")
+source("D:/CARLOS/Estadistica Espacial/Drive Estadistica Espacial/Datos ï¿½rea/Funciones/moran.cluster.R")
+source("D:/CARLOS/Estadistica Espacial/Drive Estadistica Espacial/Datos ï¿½rea/Funciones/moran.bi.R")
+source("D:/CARLOS/Estadistica Espacial/Drive Estadistica Espacial/Datos ï¿½rea/Funciones/moran.cluster.R")
+source("D:/CARLOS/Estadistica Espacial/Drive Estadistica Espacial/Datos ï¿½rea/Funciones/getis.cluster.R")
+source("D:/CARLOS/Estadistica Espacial/Drive Estadistica Espacial/Datos ï¿½rea/Funciones/localmoran.bi.R")
+source("D:/CARLOS/Estadistica Espacial/Drive Estadistica Espacial/Datos ï¿½rea/Funciones/moranbi.plot.R") 
+source("D:/CARLOS/Estadistica Espacial/Drive Estadistica Espacial/Datos ï¿½rea/Funciones/quantile.e.R")
+source("D:/CARLOS/Estadistica Espacial/Drive Estadistica Espacial/Datos ï¿½rea/Funciones/sp.na.omit.R")
+source("D:/CARLOS/Estadistica Espacial/Drive Estadistica Espacial/Datos ï¿½rea/Funciones/correlogram.d.R")
+source("D:/CARLOS/Estadistica Espacial/Drive Estadistica Espacial/Datos ï¿½rea/Funciones/sp.correlogram.R")
+source("D:/CARLOS/Estadistica Espacial/Drive Estadistica Espacial/Datos ï¿½rea/Funciones/spcorrelogram.bi.R")
+source("D:/CARLOS/Estadistica Espacial/Drive Estadistica Espacial/Datos ï¿½rea/Funciones/moran.bi1.R")
+source("D:/CARLOS/Estadistica Espacial/Drive Estadistica Espacial/Datos ï¿½rea/Funciones/moranbi1.test.R")
+source("D:/CARLOS/Estadistica Espacial/Drive Estadistica Espacial/Datos ï¿½rea/Funciones/geary.bi.R")
+source("D:/CARLOS/Estadistica Espacial/Drive Estadistica Espacial/Datos ï¿½rea/Funciones/test.w.R")
        
 #https://rpubs.com/chrisbrunsdon/114718
 #http://stackoverflow.com/questions/36251653/r-program-map-is-small
@@ -208,6 +208,7 @@ plot(cord$res)
 
 #####pesos K-Vecino####
 #k.nb <- read.gwt2nb("atl_hom.gwt") 
+## Generar opciones para poder escojer despues la mejor matriz W
 IDs <- row.names(as(col.poly, "data.frame"))
 k1 <- knn2nb(knearneigh(coords))
 col.k1 <-nb2listw(k1, style="W")
@@ -222,25 +223,29 @@ col.k5 <-nb2listw(k5, style="W")
 k6 <- knn2nb(knearneigh(coords,6))
 col.k6 <-nb2listw(k6, style="W")
 
+## Generar el correlograma, recordar que cuando las barras tocan el cero, no son significativas
+## Esto es importante porque podemos identificar que terminos podemos ingresar en el modelo, 
+## en el analisis confirmatario podemos probar esos terminos. 
 col.kn7<-knn2nb(knearneigh(coords, k=7), row.names=IDs) 
 col.knlags <- nblag(col.kn7, 7)
 sp.cr <- sp.correlogram(col.kn7, col.poly@data$CRIME, order=7, method="corr", style="W", zero.policy=T)
 cor <- sp.correlogram(k6, col.poly@data$CRIME, order=6, method="I", style="W", zero.policy=T)
 plot(cor)
 
-# Además del estilo "W", es posible crear los pesos de acuerdo con los estilos "B", "C", "U" 
-# y "S". El estilo "B" es la codificación binaria básica, "C" es la estandarización global, 
-# "U" es igual a "C" dividido el número de vecinos, y "S" es el esquema de codificación en 
+# Ademï¿½s del estilo "W", es posible crear los pesos de acuerdo con los estilos "B", "C", "U" 
+# y "S". El estilo "B" es la codificaciï¿½n binaria bï¿½sica, "C" es la estandarizaciï¿½n global, 
+# "U" es igual a "C" dividido el nï¿½mero de vecinos, y "S" es el esquema de codificaciï¿½n en 
 # que se estabiliza la varianza (Tiefelsdorf et al. 1999).
                   
 o.nb <- read.gal("C:/Program Files/R/R-4.0.0/library/spdep/etc/weights/columbus.gal")    
-
+# Si hacemos esto es necesario revizar que las conexiones quedaron Bien
+# porque hay casos, en donde las importantes no quedan tan bien 
 a.lw <- nb2listw(o.nb, style="W")
 a.lwb <- nb2listw(o.nb, style="B")
 a.lw$weights[[1]]                               # Pesos de los vecinos del poligono 1
 a.lw$weights[[49]]                              # Pesos de los vecinos del poligono 49
 
-# matriz de vecindad en términos de unos y ceros
+# matriz de vecindad en tï¿½rminos de unos y ceros
 
 bin.matrix <- matrix(0, ncol=length(o.nb), nrow=length(o.nb))
               for (i in 1:length(o.nb)){
@@ -249,36 +254,36 @@ bin.matrix <- matrix(0, ncol=length(o.nb), nrow=length(o.nb))
               bin.matrix[i, o.nb[[i]][k]] <- 1
               }
               }
-# ¿Cómo sería a partir de lo anteriormente visto?
+# ï¿½Cï¿½mo serï¿½a a partir de lo anteriormente visto?
 bin.matrix.1<-as_dgRMatrix_listw(a.lwb)
               
-# A continuación se presentan solo las primeras seis filas y las primeras 14 columnas de esa matriz: 
+# A continuaciï¿½n se presentan solo las primeras seis filas y las primeras 14 columnas de esa matriz: 
 
 bin.matrix[1:6, 1:14]
 
-# Visualmente se obtiene una imagen como la presentada mediante este código:
-image(as_dgRMatrix_listw(a.lw))                   # Ponderación estandarizada por fila
-image(as_dgRMatrix_listw(a.lwb))                  # Ponderación binaria
+# Visualmente se obtiene una imagen como la presentada mediante este cï¿½digo:
+image(as_dgRMatrix_listw(a.lw))                   # Ponderaciï¿½n estandarizada por fila
+image(as_dgRMatrix_listw(a.lwb))                  # Ponderaciï¿½n binaria
 image(bin.matrix)
 
 #########################################################
-# 2. CÁLCULO DE LA AUTOCORRELACIÓN ESPACIAL Y GRÁFICO
+# 2. Cï¿½LCULO DE LA AUTOCORRELACIï¿½N ESPACIAL Y GRï¿½FICO
 #########################################################
 
-# El índice I se obtiene a partir de la Ecuación (1):
+# El ï¿½ndice I se obtiene a partir de la Ecuaciï¿½n (1):
 CRIME <- as.data.frame(col.poly)$CRIME
 x <- c(CRIME)
-# Se calcula el valor promedio de la variable, y se resta a cada observación la media,
+# Se calcula el valor promedio de la variable, y se resta a cada observaciï¿½n la media,
 # se eleva al cuadrado y se calcula la suma:
 
 x.media <- mean(x)
 x.centrado <- x - x.media
 scx <- sum(x.centrado^2)                          # Suma de Cuadrados de x (variable crimen)
-scx1 <- var(x)*(length(x)-1)                      # Suma de Cuadrados de x (variable crimen), más rápido.
+scx1 <- var(x)*(length(x)-1)                      # Suma de Cuadrados de x (variable crimen), mï¿½s rï¿½pido.
 crossprod(x.centrado)
             
-# cálculo de la variable de rezagos, WY, que se obtiene a partir de la matriz de pesos. Para ello, 
-# en cada polígono se multiplica el valor de la variable CRIME de cada uno de sus vecinos por su 
+# cï¿½lculo de la variable de rezagos, WY, que se obtiene a partir de la matriz de pesos. Para ello, 
+# en cada polï¿½gono se multiplica el valor de la variable CRIME de cada uno de sus vecinos por su 
 # respectivo peso y luego se suman dichos productos.
 
 wy <- matrix(0, ncol=1, nrow=length(CRIME))
@@ -290,27 +295,27 @@ wy <- matrix(0, ncol=1, nrow=length(CRIME))
       }
       }
 
-# Otra forma más simple sería:
+# Otra forma mï¿½s simple serï¿½a:
 W <- as.matrix(as_dgRMatrix_listw(a.lw))
 Y <- CRIME
 WY <- W%*%Y
 
 lag.listw(a.lw, CRIME)                      # Directamente en el paquete "spdep"
  
-# Luego se define el N y el S, que para este ejercicio son ambos iguales a 49, y obtenemos el índice I de Moran aplicando la Ecuación (1):
+# Luego se define el N y el S, que para este ejercicio son ambos iguales a 49, y obtenemos el ï¿½ndice I de Moran aplicando la Ecuaciï¿½n (1):
 N <- length(CRIME)
 S <- sum(unlist(a.lw$weights))
 I <- (N/S)*((sum(x.centrado * wy))/scx)
 I <- as.vector(scale(Y))%*%W%*%as.vector(scale(Y))/as.vector(scale(Y))%*%as.vector(scale(Y))
 
-# El estadístico de Moran obtenido para la variable de interés indica que existe una correlación espacial de 0.5 
+# El estadï¿½stico de Moran obtenido para la variable de interï¿½s indica que existe una correlaciï¿½n espacial de 0.5 
 # Luego se calcula la kurtosis de la muestra:
 K <- (length(x) * sum(x.centrado^4))/(scx^2)
 
 
-# Directamente el índice de Moran y la Kurtosis mediante la función moran() son:
-#x1<-(x-mean(x))/sd(x)                           # Estandarizando, para obtener el mismo gráfico de GeoDA
-moran(x, listw=a.lw, n=length(o.nb), S0=S, zero.policy=F)       # Cambiar por "x1", para la estandarización
+# Directamente el ï¿½ndice de Moran y la Kurtosis mediante la funciï¿½n moran() son:
+#x1<-(x-mean(x))/sd(x)                           # Estandarizando, para obtener el mismo grï¿½fico de GeoDA
+moran(x, listw=a.lw, n=length(o.nb), S0=S, zero.policy=F)       # Cambiar por "x1", para la estandarizaciï¿½n
 set.seed(123)
 moran.test(x, nb2listw(o.nb, style="W"), zero.policy=F)
 Z.I <- (0.485770914-(-0.020833333))/sqrt(0.008991121)
@@ -342,16 +347,16 @@ ZI <- (I-EI)/sqrt(VI)
 
 set.seed(123)
 geary.test(x, nb2listw(o.nb, style="W"), zero.policy=F)
-(0.547803377-1)/sqrt(0.009804108)                               # Autocorrelación espacial, concentración de valores similares
+(0.547803377-1)/sqrt(0.009804108)                               # Autocorrelaciï¿½n espacial, concentraciï¿½n de valores similares
 globalG.test(x, nb2listw(o.nb, style="B"))
 
-# Gráfico de dispersión del índice de Moran
-mp<-moran.plot(x, a.lw, main="Gráfico de Dispersión de Moran", ylim=c(-2,2))      # Cambiar por "x1", para la estandarización
+# Grï¿½fico de dispersiï¿½n del ï¿½ndice de Moran
+mp<-moran.plot(x, a.lw, main="Grï¿½fico de Dispersiï¿½n de Moran", ylim=c(-2,2))      # Cambiar por "x1", para la estandarizaciï¿½n
 mp$infmat
 set.seed(127)
-mc<-moran.mc(x, a.lw, nsim=1000, zero.policy=F)     # Se rechaza Ho:rho=0, es decir hay autocorrelación espacial.
+mc<-moran.mc(x, a.lw, nsim=1000, zero.policy=F)     # Se rechaza Ho:rho=0, es decir hay autocorrelaciï¿½n espacial.
 mc
-plot(mc)                                            # Función de densidad de las simulaciones de Monte Carlo.
+plot(mc)                                            # Funciï¿½n de densidad de las simulaciones de Monte Carlo.
 gt <- geary.mc(x, a.lw, nsim=1000, zero.policy=F)
 gt                                                              
 plot(gt)
@@ -368,14 +373,14 @@ a.lwq5 <- nb2listw(col.lags[[5]], style="W")
 a.lwq6 <- nb2listw(col.lags[[6]], style="W", zero.policy =T)
 
 #============================================================
-# Criterios basados en gráficas
+# Criterios basados en grï¿½ficas
 #============================================================
 op=par(mfrow=c(2,2))
 trinb=tri2nb(coords)
 delaunay <-nb2listw(trinb, style="W")
 plot(col.poly,border="gray")
 plot(trinb,coords,add=T,col="blue")
-title(main="Triangulación Delaunay")
+title(main="Triangulaciï¿½n Delaunay")
 soinb=graph2nb(soi.graph(trinb,coords))
 esf.influencia <-nb2listw(soinb, style="W")
 plot(col.poly,border="gray")
@@ -385,7 +390,7 @@ gabrielnb=graph2nb(gabrielneigh(coords),sym=TRUE)
 gabriel <-nb2listw(gabrielnb, style="W")
 plot(col.poly,border="gray")
 plot(gabrielnb,coords,add=T,col="red")
-title(main="Gráfica de Gabriel")
+title(main="Grï¿½fica de Gabriel")
 relativenb=graph2nb(relativeneigh(coords),sym=TRUE)
 vec.relative <-nb2listw(relativenb, style="W")
 plot(col.poly,border="gray")
@@ -395,7 +400,7 @@ par(op)
 
 
 #==========================================================================
-############### SELECCIÓN DE MATRICES DE VECINDAD POR (PCNM) ##############
+############### SELECCIï¿½N DE MATRICES DE VECINDAD POR (PCNM) ##############
 #==========================================================================
 #principal coordinates of neighbour matrices (PCNM, Borcard and Legendre (2002))
 col_nbq1 <- poly2nb(col.poly)               # Efecto Reina
@@ -423,7 +428,7 @@ summary(test.W(col.poly@data$CRIME,col.kn7))
 nb2listw(col.knlags[[6]], style="B", glist = NULL)
 
 #=============================================================
-############### SELECCIÓN DE LA MATRIZ DE PESOS ##############
+############### SELECCIï¿½N DE LA MATRIZ DE PESOS ##############
 #=============================================================
 
 Pesos.list<-list(reina1=a.lwq1,reina2=a.lwq2,reina3=a.lwq3,reina4=a.lwq4,reina5=a.lwq5,reina6=print.listw(a.lwq6,zero.policy=TRUE),
@@ -432,18 +437,18 @@ Pesos.list<-list(reina1=a.lwq1,reina2=a.lwq2,reina3=a.lwq3,reina4=a.lwq4,reina5=
                  delaunay=delaunay,esfera.inf=esf.influencia,vec.relativos=vec.relative)
 
 class(Pesos.list)
-# Bauman et al. (2018) observo que optimizar la elección de la Matriz de Pesos Espaciales (SWM, por sus siglas 
-# en inglés) conducía a tasas de error de tipo I infladas si no se aplicaba un control explícito del número de 
-# SWM probadas. Por lo tanto, se debe aplicar una corrección de Sidák (1967) para múltiples pruebas al P_value 
+# Bauman et al. (2018) observo que optimizar la elecciï¿½n de la Matriz de Pesos Espaciales (SWM, por sus siglas 
+# en inglï¿½s) conducï¿½a a tasas de error de tipo I infladas si no se aplicaba un control explï¿½cito del nï¿½mero de 
+# SWM probadas. Por lo tanto, se debe aplicar una correcciï¿½n de Sidï¿½k (1967) para mï¿½ltiples pruebas al P_value 
 # de la prueba global de cada SWM (es decir, el modelo que integra todo el conjunto de predictores espaciales). 
-# La corrección de Sidak se calcula como Pcorregido = 1 - (1 - P)^(1/n) donde n es el número de pruebas realizadas, 
-# P es el P_value observado y Pcorrected es el nuevo valor p después de la corrección. El valor p se calcula 
-# primero usando n permutaciones y luego se corrige de acuerdo con el número total de SWM probadas.
+# La correcciï¿½n de Sidak se calcula como Pcorregido = 1 - (1 - P)^(1/n) donde n es el nï¿½mero de pruebas realizadas, 
+# P es el P_value observado y Pcorrected es el nuevo valor p despuï¿½s de la correcciï¿½n. El valor p se calcula 
+# primero usando n permutaciones y luego se corrige de acuerdo con el nï¿½mero total de SWM probadas.
 nbw <- length(Pesos.list)
-# al 5% de significancía
+# al 5% de significancï¿½a
 1 - (1 - 0.05)^(nbw)
-# la optimización para la selección se realiza maximizando el R cuadrado ajustado (R2 Adjust) o minimizando 
-# la autocorrelación espacial residual.
+# la optimizaciï¿½n para la selecciï¿½n se realiza maximizando el R cuadrado ajustado (R2 Adjust) o minimizando 
+# la autocorrelaciï¿½n espacial residual.
 W_sel <- listw.select(col.poly$CRIME, Pesos.list, MEM.autocor = "all", p.adjust = TRUE, nperm = 50)
 W_sel$candidates
 W_sel$best.id
@@ -451,9 +456,9 @@ W_sel$best.id
 # Para copiar y editar en Latex
 xtable(W_sel$candidates, digits = 6)
 W_sel$best$MEM.select
-# El criterio que más valor tiene para la selección definitiva de la matriz de contigüidad
-# es el R cuadrado ajustado (RAdjust 2), que minimiza la autocorrelación. Por esto la matriz
-# elegida será K vecinos con 5 vecinos más cercanos.
+# El criterio que mï¿½s valor tiene para la selecciï¿½n definitiva de la matriz de contigï¿½idad
+# es el R cuadrado ajustado (RAdjust 2), que minimiza la autocorrelaciï¿½n. Por esto la matriz
+# elegida serï¿½ K vecinos con 5 vecinos mï¿½s cercanos.
 Best.SWM <- Pesos.list[W_sel$best.id]             # Para el ejemplo SWM es col.k2
 detach(package:adespatial)
 
@@ -489,8 +494,8 @@ getis.cluster(col.poly@data$CRIME, a.lwq1, zero.policy = T, col.poly, significan
 ###############################################
 
 x1<-(x-mean(x))/sd(x)
-mp<-moran.plot(x1, a.lwq1, main="Gráfico de Dispersión de Moran")      
-# Cambiar por "x1", para la estandarización
+mp<-moran.plot(x1, a.lwq1, main="Grï¿½fico de Dispersiï¿½n de Moran")      
+# Cambiar por "x1", para la estandarizaciï¿½n
 
 infl1 <- apply(mp$is.inf, 1, any)
 lhx1 <- cut(col.poly@data$CRIME, breaks=c(min(col.poly@data$CRIME), mean(col.poly@data$CRIME), 
@@ -510,25 +515,25 @@ legend(locator(1), legend=c("None", "LL", "LH", "HL", "HH"), fill=attr(colcode, 
 
 
 #############################
-# Ajuste Modelo Clásico
+# Ajuste Modelo Clï¿½sico
 #############################
 
 # columbus.data <- as.data.frame(col.poly)
 lm_fit <- lm(CRIME ~ INC + HOVAL, data=columbus)
 summary(lm_fit)
 columbus$lm_res <- residuals(lm_fit)
-# Mapa residuales: Opción 1
+# Mapa residuales: Opciï¿½n 1
 spplot(columbus["lm_res"], col.regions = rev(terrain.colors(20)))
 
-# Mapa residuales: Opción 2
+# Mapa residuales: Opciï¿½n 2
 pal2 <- colorRampPalette(c("red3", "wheat1", "blue3"))
 spplot(columbus,"lm_res", col.regions = pal2(20))
 
-# Mapa residuales: Opción 3
+# Mapa residuales: Opciï¿½n 3
 my.palette <- brewer.pal(n = 9, name = "YlOrRd")
 spplot(columbus, "lm_res", col.regions = my.palette, cuts = 8, col = "transparent")
 
-# Mapa residuales: Opción 4
+# Mapa residuales: Opciï¿½n 4
 breaks.ci <- classIntervals(columbus$lm_res, n = 9, style = "quantile", intervalClosure = "right")$brks
 # se amplian los limites inferior y superior en: .Machine$double.eps*5000000000000,  con el fin que un poligono no quede siempre en blanco.
 breaks.ci[1] <- breaks.ci[1] - .Machine$double.eps*5000000000000
@@ -557,7 +562,7 @@ LM.ERR <- (((t(u)%*%W%*%u)/sigma2)^2)/T1
 p.value <- 1-pchisq(LM.ERR,1)
 
 
-# Validación supuestos
+# Validaciï¿½n supuestos
 bptest(lm_fit)
 resettest(lm_fit)
 raintest(lm_fit)
@@ -566,7 +571,7 @@ library(car)
 vif(lm_fit)
 
 library(RcmdrPlugin.epack)
-# Transformación Box-Cox
+# Transformaciï¿½n Box-Cox
 BC <- boxcox(CRIME ~ INC+HOVAL, data = columbus, lambda = seq(-3, 3, len = 20))
 bc2(columbus$CRIME)
 bc2(columbus$HOVAL)
@@ -592,7 +597,7 @@ plot(lg)
 
 
 ###########################################
-# 3. AJUSTE DEL MODELO SAR Y VALIDACIÓN
+# 3. AJUSTE DEL MODELO SAR Y VALIDACIï¿½N
 ###########################################
 
 # primero se seleccionan las variables que son utiles para el modelo:
@@ -601,7 +606,7 @@ d.col <- as.data.frame(cbind(datos.col$POLYID, datos.col$HOVAL, datos.col$INC, d
 colnames(d.col) <- c("POLYID", "HOVAL", "INC", "CRIME")
 attach(d.col)
 
-# La variable dependiente de nuestro modelo será la variable CRIME, y las variables 
+# La variable dependiente de nuestro modelo serï¿½ la variable CRIME, y las variables 
 # explicativas son INC y HOVAL. Se procede a separarlas:
 Y <- CRIME
 INC <- datos.col$INC
@@ -609,8 +614,8 @@ HOVAL <- datos.col$HOVAL
 X <- cbind(INC, HOVAL)
 
 # Adicionamos una columna de unos (1) al conjunto de las variables independientes en el objeto x 
-# previamente creado. Con base en los objetos x y y se hará posteriormente la estimación del 
-# parámetro (rho) del modelo. Observamos las primeras 5 filas del objeto x:
+# previamente creado. Con base en los objetos x y y se harï¿½ posteriormente la estimaciï¿½n del 
+# parï¿½metro (rho) del modelo. Observamos las primeras 5 filas del objeto x:
 
 X <- cbind(1, X)
 X[1:5,]
@@ -674,7 +679,7 @@ summary(lm.lag)
 #summary(lm.lag1)
 
 ####################################################################################
-# Lo mismo pero simplificando en R, a partir de la instrucción del paquete "spdep":
+# Lo mismo pero simplificando en R, a partir de la instrucciï¿½n del paquete "spdep":
 ####################################################################################
 
 # Modelo Spatial Lag:                                                                   col.k5
@@ -694,7 +699,7 @@ hetero.plot <- function(model) {
  }
 hetero.plot(col.lag.sm)
 
-#Nagelkerke NJD (1991) A note on a general definition of the coefficient of determination. Biometrika 78: 691¨C692. 
+#Nagelkerke NJD (1991) A note on a general definition of the coefficient of determination. Biometrika 78: 691ï¿½C692. 
 NK <- function(obj, y) { 
      n <- length(obj$residuals) 
      nullLL <- logLik(lm(y ~ 1)) 
@@ -719,26 +724,26 @@ fitted.sarlm(col.error.sm)
 bptest.sarlm(col.error.sm)
 hetero.plot(col.error.sm)
 
-# Comparación
+# Comparaciï¿½n
 anova(col.lag.sm,col.error.sm)            
 
-# Verificación de Supuestos: "Spatial Lag"
+# Verificaciï¿½n de Supuestos: "Spatial Lag"
 
 # Spatial Lag:
 shapiro.test(col.lag.sm$residuals)
 # ks.test(col.lag.sm$residuals, alternative = "two.sided", pnorm) 
-plot(col.lag.sm$residuals)                                  # Gráfico de los residuales
-dens.sl <- density(col.lag.sm$residuals)                    # Gráfico de densidad
-plot(dens.sl, main="Gráfico de la función de densidad\n de los residuos (Spatial Lag)") 
+plot(col.lag.sm$residuals)                                  # Grï¿½fico de los residuales
+dens.sl <- density(col.lag.sm$residuals)                    # Grï¿½fico de densidad
+plot(dens.sl, main="Grï¿½fico de la funciï¿½n de densidad\n de los residuos (Spatial Lag)") 
 bptest.sarlm(col.lag.sm)
 
 
 # Spatial Error:
 shapiro.test(col.error.sm$residuals)
 # ks.test(col.error.sm$residuals, alternative = "two.sided", pnorm) 
-plot(col.error.sm$residuals)                                # Gráfico de los residuales
-dens.se <- density(col.error.sm$residuals)                  # Gráfico de densidad
-plot(dens.se, main="Gráfico de la función de densidad\n de los residuos (Spatial Error)") 
+plot(col.error.sm$residuals)                                # Grï¿½fico de los residuales
+dens.se <- density(col.error.sm$residuals)                  # Grï¿½fico de densidad
+plot(dens.se, main="Grï¿½fico de la funciï¿½n de densidad\n de los residuos (Spatial Error)") 
  
 # SARAR
 col.sarar <- sacsarlm(CRIME ~ INC + HOVAL, data=as.data.frame(col.poly), listw=col.k5)    # CRIME ~1
@@ -776,14 +781,14 @@ fitted.sarlm(columlagsd)
 bptest.sarlm(columlagsd)
 shapiro.test(columlagsd$residuals)
 
-# Comparación (Es mejor columlagsd)
+# Comparaciï¿½n (Es mejor columlagsd)
 anova(col.lag.sm,columlagsd)             
 anova(columlagsd,col.error.sm)
 anova(columlagsd,col.sarar)            
 anova(col.lag.sm,col.error.sm)
             
 
-# Se rezagan las variables, para ello se copia la información en col.poly1
+# Se rezagan las variables, para ello se copia la informaciï¿½n en col.poly1
 col.poly1 <- as.data.frame(col.poly)
 col.poly1$WX <- lag.listw(a.lw, col.poly1$X)
 col.poly1$WY <- lag.listw(a.lw, col.poly1$Y)
@@ -803,10 +808,10 @@ col.poly1$W4CRIME <- lag.listw(a.lw4,col.poly1$CRIME)
 col.poly1$W5CRIME <- lag.listw(a.lw5,col.poly1$CRIME)
 col.poly1$W6CRIME <- lag.listw(a.lw6,col.poly1$CRIME, zero.policy =T)
 
-# Las variables regresoras de abajo son sólo las significativas estadisticamente   (col.k2)
+# Las variables regresoras de abajo son sï¿½lo las significativas estadisticamente   (col.k2)
 col.lagx <- lagsarlm(CRIME ~ INC + HOVAL + X + WX, data=col.poly1, listw=a.lw) 
 summary(col.lagx, Nagelkerke=T)
-# Se prueban posibles transformaciones de acuerdo a los resultados de la transformación Box-Cox
+# Se prueban posibles transformaciones de acuerdo a los resultados de la transformaciï¿½n Box-Cox
 col.lagxt <- lagsarlm(CRIME~ log(INC) + I(1/sqrt(HOVAL)) + X + WX, data=col.poly1, listw=a.lw) 
 summary(col.lagxt, Nagelkerke=T, correlation=TRUE)
 bptest.sarlm(col.lagx)
@@ -821,18 +826,18 @@ fitted.sarlm(col.lagx)
 # Calculo pseudoR2:
 pseudoR2 <- cor(fitted.sarlm(col.lagx),col.poly1$CRIME)^2
 
-# Comparación (Es mejor col.lagx "Durbin Espacial")
+# Comparaciï¿½n (Es mejor col.lagx "Durbin Espacial")
 anova(col.lag.sm,col.lagx)            
 anova(col.lagx,col.lagxt)
 
-# Validación supuestos Durbin Espacial:
+# Validaciï¿½n supuestos Durbin Espacial:
 bptest.sarlm(col.lagx)
 shapiro.test(col.lagx$residuals)
 moran.test(col.lagx$residuals, nb2listw(o.nb, style="W"),zero.policy=T,alternative="two.sided")
 
-plot(col.lagx$residuals)                                  # Gráfico de los residuales
-dens.sd <- density(col.lagx$residuals)                    # Gráfico de densidad
-plot(dens.sd, main="Gráfico de la función de densidad\n de los residuos (Spatial Durbin)") 
+plot(col.lagx$residuals)                                  # Grï¿½fico de los residuales
+dens.sd <- density(col.lagx$residuals)                    # Grï¿½fico de densidad
+plot(dens.sd, main="Grï¿½fico de la funciï¿½n de densidad\n de los residuos (Spatial Durbin)") 
 
 # Modelo glm tasa criminalidad
 col.glm<-glm(CRIME~W1CRIME + W5CRIME + INC + HOVAL + WHOVAL + X +Y + WX + WY, data=col.poly1, family=poisson(link="log")) 
@@ -909,15 +914,15 @@ deviance.sarlm(col.errorH.sm)
 residuals.sarlm(col.errorH.sm)
 coef.sarlm(col.errorH.sm)
 fitted.sarlm(col.errorH.sm)
-bptest.sarlm(col.errorH.sm)                                               # Aún es heteroscedastico
+bptest.sarlm(col.errorH.sm)                                               # Aï¿½n es heteroscedastico
 hetero.plot(col.errorH.sm)
-moran.test(residuals(col.errorH.sm), nb2listw(o.nb, style="W"),zero.policy=T,alternative="two.sided")           # Y libre de autocorrelación
+moran.test(residuals(col.errorH.sm), nb2listw(o.nb, style="W"),zero.policy=T,alternative="two.sided")           # Y libre de autocorrelaciï¿½n
 
 # Calculo pseudoR2:
 pseudoR2.errorH.sm <- cor(col.errorH.sm$fitted.values,col.poly$CRIME)^2
 
 ############################
-##  Análisis de Impactos  ##
+##  Anï¿½lisis de Impactos  ##
 ############################
 
 col.new <- col.poly
@@ -938,7 +943,7 @@ effect.10 <- new.pred$fit - orig.pred$fit
 el <- data.frame(name = col.new$NEIG, dif_pred_CRIME = effect.10)
 col.new$ef10 <- el$dif_pred_CRIME
 
-# Ordenando los barrios por el valor absoluto del cambio en la predicción del CRIME
+# Ordenando los barrios por el valor absoluto del cambio en la predicciï¿½n del CRIME
 el <- el[rev(order(abs(el$dif_pred_CRIME))), ]
 el[1:10, ]  #muestra los 10 primeros barrios
 
@@ -948,7 +953,7 @@ breaks <- c(min(col.new$ef10), -0.05, 0.05, max(col.new$ef10))
 labels <- c("Efecto negativo (< -.05)", "Sin efecto (-.05 a .05)", 
     "Efecto positivo (> .05)")
 
-# faltaba all.inside =T para evitar un poligono en blanco asociado al valor máximo  
+# faltaba all.inside =T para evitar un poligono en blanco asociado al valor mï¿½ximo  
 np <- findInterval(col.new$ef10, breaks,all.inside =T) 
 colors <- c("red", "yellow", "blue")
 
@@ -958,7 +963,7 @@ mtext("Efectos de un cambio en el barrio 10, (fijando CRIME=10)\n sobre los valo
     side = 3, line = 1)
 legend("topleft", legend = labels, fill = colors, bty = "n")
 
-# También podríamos mapear la magnitud de los cambios causados a raíz de la disminución de la criminalidad en el barrio 10.
+# Tambiï¿½n podrï¿½amos mapear la magnitud de los cambios causados a raï¿½z de la disminuciï¿½n de la criminalidad en el barrio 10.
 
 pal5 <- brewer.pal(6, "Spectral")
 cats5 <- classIntervals(col.new$ef10, n = 5, style = "jenks")
@@ -1017,9 +1022,9 @@ rep(1,49)%*%(SrW.I)%*%matrix(rep(1,49),ncol=1)/49              # otra forma mas 
 # Impacto Total HOVAL:
 rep(1,49)%*%(SrW.H)%*%matrix(rep(1,49),ncol=1)/49              # otra forma mas simple es: sum(SrW.H)/49
 
-# Nuestro modelo que trata las tasas de criminalidad CRIME (Robo de viviendas y vehículos por cada 1000 hogares): en terminos de los impactos 
+# Nuestro modelo que trata las tasas de criminalidad CRIME (Robo de viviendas y vehï¿½culos por cada 1000 hogares): en terminos de los impactos 
 # nos dice que un aumento del 100% en HOVAL (valor de la vivienda en miles de dolares) conduce a una caida del  34.9% (en promedio) en la tasa 
-# de CRIME (Robo de viviendas y vehículos por cada 1000 hogares).
+# de CRIME (Robo de viviendas y vehï¿½culos por cada 1000 hogares).
 
 impacts(col.lagx, tr=trMatc)
 impacts(col.lagx, tr=trMC)
@@ -1047,7 +1052,7 @@ summary(impacts(mobj, tr=trMatc, R=200), zstats=TRUE)
 # Interpreting Spatial Lag Models
 
 ########################################################################
-##########       Regresión Geográficamente Ponderada       #############
+##########       Regresiï¿½n Geogrï¿½ficamente Ponderada       #############
 ########################################################################
 
 # https://gis.stackexchange.com/questions/241127/how-to-plot-output-from-gwr-in-r
