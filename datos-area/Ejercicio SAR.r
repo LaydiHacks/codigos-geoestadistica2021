@@ -432,7 +432,8 @@ nb2listw(col.knlags[[6]], style="B", glist = NULL)
 
 Pesos.list<-list(reina1=a.lwq1,reina2=a.lwq2,reina3=a.lwq3,reina4=a.lwq4,reina5=a.lwq5,reina6=print.listw(a.lwq6,zero.policy=TRUE),
                              torre1=r.lw1,torre2=r.lw2,torre3=r.lw3,torre4=r.lw4,torre5=r.lw5,torre6=print.listw(r.lw6,zero.policy=TRUE), 
-                 kvecinos1=col.k1,kvecinos2=col.k2,kvecinos3=col.k3,kvecinos4=col.k4,kvecinos5=col.k5,gabriel=gabriel,
+                 kvecinos1=col.k1,kvecinos2=col.k2,kvecinos3=col.k3,kvecinos4=col.k4,kvecinos5=col.k5,
+                 gabriel=gabriel,
                  delaunay=delaunay,esfera.inf=esf.influencia,vec.relativos=vec.relative)
 
 class(Pesos.list)
