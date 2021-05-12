@@ -260,54 +260,52 @@ orden<-nb2listw(gabrielnb, style="W", zero.policy =T)
 
 formula_modelo = IVS~AGE17+AGE65+AH+CIVILES16+DISC+EN5+log(IPC)+MPAREN+NDS25+NOSEGURO+PMIN+POBREZA+RENT30
 
-#MODELO GNSS
-mod.GNS <- sacsarlm(formula_modelo, listw = orden, data = mapa.data, type = "sacmixed")
-summary(mod.GNS,Nagelkerke=T)
-mod.GNS2 <- sacsarlm(l_salario ~ desempleo, listw = W2_list, data = spatial_data, type = "sacmixed")
-summary(mod.GNS2,Nagelkerke=T)
+#MODELO GNSS (Da Lambda = 0, probamos con Burbin Spatial)
+  mod.GNS <- sacsarlm(formula_modelo, listw = orden, data = mapa.data, type = "sacmixed")
+  summary(mod.GNS,Nagelkerke=T)
+  mod.GNS2 <- sacsarlm(l_salario ~ desempleo, listw = W2_list, data = spatial_data, type = "sacmixed")
+  summary(mod.GNS2,Nagelkerke=T)
 
 #MODELO DURBIN SPATIAL
-nepallagsd<-lagsarlm(formula_modelo, listw=orden,data=mapa.data, type="mixed") 
-summary(nepallagsd, correlation=TRUE)
-
-
+  lagsd<-lagsarlm(formula_modelo, listw=orden,data=mapa.data, type="Durbin") 
+  summary(lagsd, correlation=TRUE)
+  #Otra opción del surbin spatial
+  mod.SDEM1 <- errorsarlm(l_salario ~ desempleo, listw = W1_list, data = spatial_data, etype = "emixed")
+  summary(mod.SDEM1,Nagelkerke=T)
+  #Una forma de limpiar este modelo es optienedo las variables rezagadas e incluirlas en el modelo
+  #col.poly1$WX <- lag.listw(a.lw, col.poly1$X) #Varibale rezagada
+  col.lagx <- lagsarlm(CRIME ~ INC + HOVAL + X + WX, data=col.poly1, listw=a.lw) 
+  
+  
+  
 #MODELO CL?SICO
-  mclasico<-lm(IVS~AGE17+AGE65+AH+CIVILES16+DISC+EN5+log(IPC)+MPAREN+NDS25+NOSEGURO+PMIN+POBREZA+RENT30,data = mapa.data)
+  mclasico<-lm(formula_modelo,data = mapa.data)
   summary(mclasico)
   #Sacamos las variables no significativas
-  mejorclasico<-lm(IVS~AGE65+AH+EN5+log(IPC)+MPAREN+NDS25+NOSEGURO+PMIN+POBREZA+RENT30,mapa.data)
+  formula_mc = IVS~AGE65+AH+EN5+log(IPC)+MPAREN+NDS25+NOSEGURO+PMIN+POBREZA+RENT30
+  mejorclasico<-lm(formula_mc, data=mapa.data)
   summary(mejorclasico)
   
-  residuosclasico<-residuals(mejorclasico)
+  residuos <- mapa
+  residuos$mc <-residuals(mejorclasico)
+  spplot(residuos, "mc", col.regions = rev(terrain.colors(20))) #Mapa de Residuos
   shapiro.test(residuosclasico)  
   bptest(mejorclasico)
-  lm.morantest(mejorclasico,orden)
-  stepwise(mclasico,"backward/forward","AIC")
-
-#MULTIPLICADORES DE LAGRANGE
-  LM<-lm.LMtests(mejorclasico, orden, test="all")
-  print(LM)
+  lm.morantest(mejorclasico,orden) 
+  #Corremos todas las pruebas
+  pruebas <- lm.LMtests(mejorclasico, listw = orden, test = "all")
+  summary(pruebas)
 
 ##MODELO SPATIAL LAG
-  msl<-lagsarlm(IVS~AGE17+AGE65+AH+CIVILES16+DISC+EN5+log(IPC)+MPAREN+NDS25+NOSEGURO+PMIN+POBREZA9+RENT+RENT30,mapa.data,listw =orden,method="eigen")
+  msl<-lagsarlm(formula_modelo,data=mapa,listw = orden,method="eigen")
   summary(msl, Nagelkerke=T, correlation=TRUE)
   rsml<-residuals.sarlm(msl)
   ols_test_normality(residuals.sarlm(msl))
   moran.test(x=rsml,orden,zero.policy =T,randomisation =T,alternative = "two.sided")
 
-#MEJOR SPATIAL LAG
-  msl<-lagsarlm(DEPECPROV~ POVINDEX+PCINC+LIF40+NOSAFH20+AD_ILLIT+lat+lon,data=mapa.data,listw = orden,method="eigen")
-  summary(msl, Nagelkerke=T, correlation=TRUE)
-
-##MODELO SPATIAL ERROR
-  mse<-errorsarlm(DEPECPROV~POVINDEX+LIF40+AD_ILLIT+KIDS1_5+NOSAFH20+lat+lon, data=nepal1, listw=orden)
-  summary(mse, correlation=TRUE, Nagelkerke=T)
-  rmse<-residuals.sarlm(mse)
-  moran.test(x=rmse,orden,zero.policy =T,randomisation =T,alternative = "two.sided")
-  
 ## SARAR - AUTOREGRESIVO EN EL ERROR
-  nepal.sarar <- sacsarlm(DEPECPROV~ POVINDEX+PCINC+LIF40+NOSAFH20+SCHOOLCNT+AD_ILLIT+lat+lon, data=mapa.data, listw=orden, method="eigen")    
-  summary(nepal.sarar, correlation=TRUE, Nagelkerke=T)
+  m.sarar <- sacsarlm(formula_modelo, data=mapa.data, listw=orden, method="eigen")    
+  summary(m.sarar, correlation=TRUE, Nagelkerke=T)
   residuals.sarlm(nepal.sarar)
   coef.sarlm(nepal.sarar)
   bptest.sarlm(nepal.sarar)
@@ -315,33 +313,75 @@ summary(nepallagsd, correlation=TRUE)
   ols_test_normality(nepal.sarar$residuals)
   moran.test(x=nepal.sarar$residuals,orden,zero.policy =T,randomisation =T,alternative = "two.sided")
   
+##OTROS MODELOS
+  # spautolm:  "SAR" or "CAR" for simultaneous or conditional autoregressions, "SMA" for spatial moving average
+  col.autSAR <- spautolm(CRIME~INC + HOVAL + X + Y, data=as.data.frame(col.poly), listw=col.k5, family="SAR") 
+  summary(col.autSAR, Nagelkerke=T)
+  hetero.plot(col.autSAR)
+  
+  col.autCAR <- spautolm(CRIME~INC + HOVAL, data=as.data.frame(col.poly), listw=col.k5, family="CAR") 
+  summary(col.autCAR, Nagelkerke=T)
+  
+  col.autSMA <- spautolm(CRIME~INC + HOVAL + X + Y, data=as.data.frame(col.poly), listw=col.k5, family="SMA") 
+  summary(col.autSMA, Nagelkerke=T)
+  
 
 #=============================================================
-############### MODELOS - SUPUESTOS  ##############
+############### AJUSTE DEL MODELO  ##############
+#=============================================================  
+
+  
+  # primero se seleccionan las variables que son utiles para el modelo:
+  datos.col <- as.data.frame(col.poly)
+  d.col <- as.data.frame(cbind(datos.col$POLYID, datos.col$HOVAL, datos.col$INC, datos.col$CRIME))
+  colnames(d.col) <- c("POLYID", "HOVAL", "INC", "CRIME")
+  attach(d.col)
+  
+  # La variable dependiente de nuestro modelo ser� la variable CRIME, y las variables 
+  # explicativas son INC y HOVAL. Se procede a separarlas:
+  Y <- CRIME
+  INC <- datos.col$INC
+  HOVAL <- datos.col$HOVAL
+  X <- cbind(INC, HOVAL)
+  
+  # Adicionamos una columna de unos (1) al conjunto de las variables independientes en el objeto x 
+  # previamente creado. Con base en los objetos x y y se har� posteriormente la estimaci�n del 
+  # par�metro (rho) del modelo. Observamos las primeras 5 filas del objeto x:
+  
+  X <- cbind(1, X)
+  
+  # Modelo Spatial Lag:                                                                   col.k5
+  col.lag.sm <- lagsarlm(CRIME ~ INC + HOVAL + X + Y, data=as.data.frame(col.poly), listw=col.k5) # CRIME ~1
+  summary(col.lag.sm, Nagelkerke=T)
+  predict.sarlm(col.lag.sm)
+  AIC(col.lag.sm)
+  deviance.sarlm(col.lag.sm)
+  residuals.sarlm(col.lag.sm)
+  coef.sarlm(col.lag.sm)
+  fitted.sarlm(col.lag.sm)
+  bptest.sarlm(col.lag.sm)
+  hetero.plot <- function(model) {
+    plot(residuals(model) ~ fitted(model))
+    abline(h=0, lty="dotted")
+    lines(lowess(fitted(model), residuals(model)), col="red")
+  }
+  hetero.plot(col.lag.sm)
+  
+  
+#=============================================================
+############### VALIDACIÓN DEL MODELO ##############
 #=============================================================  
   
+# Validación supuestos al MODELO
+  bptest(mejorclasico) #Brush Pagan 
+  resettest(mejorclasico)
+  raintest(mejorclasico)
+  shapiro.test(residuals(mejorclasico)) # p-value >0.05 Normal los residuos
+  library(car)
+  # Factor de inflation de varianza. Si 0-5 multicolinenaddad baja, 5-10, >10 multicolineadli muy alta
+  vif(mejorclasico) 
   
-#Supuestos
-  rsml<-residuals.sarlm(msl)
-#-Normalidad
-ols_test_normality(residuals.sarlm(msl))
 
-qqnorm(rsml, ylab="Residuos", xlab="Cuantiles te?ricos",main="",pch=20,col=rgb(0.3,0.5,1,0.4))
-qqline(rsml,lwd=1.9)
-boxplot(rsml, data=mapa.data,col=rgb(0.3,0.5,1,0.4),alpha=0.1,main=" ",horizontal = T, xlab="Residuos",pch=20)
-hist(rsml,  main="" , breaks="Sturges" , col= rgb(0.3,0.5,1,0.4), xlab="Residuos" , ylab="Frecuencia")
-
-#- Heterocedasticidad
-bptest.sarlm(msl)
-hetero.plot <- function(model) {
-  plot(residuals(model) ~ fitted(model),pch=20,xlab="Predicciones", ylab="Residuales",col="blue")
-  abline(h=0, lty="dotted")
-  lines(lowess(fitted(model), residuals(model)), col="red")
-}
-hetero.plot(msl)
-
-#-Autocorrelaci?n 
-moran.test(x=rsml,orden,zero.policy =T,randomisation =T,alternative = "two.sided")
 
 
 

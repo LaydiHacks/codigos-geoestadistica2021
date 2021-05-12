@@ -14,16 +14,16 @@ library(spdep)
 library(spatialreg)
 
 
-mapa <- readOGR("../db/powiaty.shp")
+mapa <- readOGR("db/powiaty.shp")
 mapa <- spTransform(mapa, "+proj=longlat")
-dane <- read.csv("../db/BDL_dane.csv", header = TRUE, sep = ";", dec = ",")
+dane <- read.csv("db/BDL_dane.csv", header = TRUE, sep = ";", dec = ",")
 mapa@data$kod <- as.numeric(as.character(mapa@data$jpt_kod_je))
 spatial_data <- merge(y = dane, x = mapa, by.y = "kod", by.x = "kod")
 centroids <- coordinates(spatial_data)
 rm(mapa)
 rm(dane)
 
-#Modelo lineal (A partir de lo específico ...?)
+#Modelo lineal (A partir de lo espec?fico ...?)
 spatial_data@data$salario <- spatial_data@data$wynagrodzenie
 spatial_data@data$l_salario <- log(spatial_data@data$salario)
 spatial_data@data$desempleo <- spatial_data@data$bezrobocie
@@ -43,13 +43,13 @@ mod.GNS1 <- sacsarlm(l_salario ~ desempleo, listw = W1_list, data = spatial_data
 summary(mod.GNS1,Nagelkerke=T)
 mod.GNS2 <- sacsarlm(l_salario ~ desempleo, listw = W2_list, data = spatial_data, type = "sacmixed")
 summary(mod.GNS2,Nagelkerke=T)
-#Depende de la matriz W! (¿Cuál es el mejor en términos socioeconómicos?)
+#Depende de la matriz W! (?Cu?l es el mejor en t?rminos socioecon?micos?)
 #...y en el nivel de significancia
 
-#¿Qué dicen Monte Carlo y la literatura?
+#?Qu? dicen Monte Carlo y la literatura?
 
 
-#De lo específico a lo general (modelos de fuente única)
+#De lo espec?fico a lo general (modelos de fuente ?nica)
 
 #Corremos todas las pruebas 
 LM_W1 <- lm.LMtests(mod.lin, listw = W1_list, test = "all")
@@ -59,7 +59,7 @@ t(sapply(LM_W1, function(x) unlist(x[1:3])))
 LM_W2 <- lm.LMtests(mod.lin, listw = W2_list, test = "all")
 t(sapply(LM_W2, function(x) unlist(x[1:3])))
 #Aqui ya aparecen las estructuras
-#...¿qué modelo es el indicado mediante las pruebas? ¿Cuál de las pruebas robustas?
+#...?qu? modelo es el indicado mediante las pruebas? ?Cu?l de las pruebas robustas?
 
 #Modelo LagSar
 mod.SLM1 <- lagsarlm(l_salario ~ desempleo, listw = W1_list, data = spatial_data)
@@ -70,7 +70,7 @@ summary(mod.SLM2,Nagelkerke=T) #Este modelo es significativo, pero los residuos 
 
 #Spatial Error
 mod.SEM1 <- errorsarlm(l_salario ~ desempleo, listw = W1_list, data = spatial_data)
-summary(mod.SEM1) #En este caso, también es signitivativo
+summary(mod.SEM1) #En este caso, tambi?n es signitivativo
 mod.SEM2 <- errorsarlm(l_salario ~ desempleo, listw = W2_list, data = spatial_data)
 summary(mod.SEM2)
 
@@ -80,11 +80,10 @@ summar(mod.SLX1)
 mod.SLX2 <- lmSLX(l_salario ~ desempleo, listw = W2_list, data = spatial_data)
 summary(mod.SLX2)
 
-#¿Qué dice la teoría? ¿Qué hay de las pruebas?
+#?Qu? dice la teor?a? ?Qu? hay de las pruebas?
 
 
-
-#Modelos de múltiples fuentes: ¿tiene sentido estimarlos individualmente?
+#Modelos de m?ltiples fuentes: ?tiene sentido estimarlos individualmente?
 
 #SARAR
 mod.SARAR1 <- sacsarlm(l_salario ~ desempleo, listw = W1_list, data = spatial_data)
