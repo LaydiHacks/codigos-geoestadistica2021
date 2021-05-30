@@ -571,6 +571,7 @@ library(car)
 vif(lm_fit)
 
 library(RcmdrPlugin.epack)
+
 # Transformaci�n Box-Cox
 BC <- boxcox(CRIME ~ INC+HOVAL, data = columbus, lambda = seq(-3, 3, len = 20))
 bc2(columbus$CRIME)
@@ -792,7 +793,6 @@ anova(col.lag.sm,col.error.sm)
 col.poly1 <- as.data.frame(col.poly)
 col.poly1$WX <- lag.listw(a.lw, col.poly1$X)
 col.poly1$WY <- lag.listw(a.lw, col.poly1$Y)
-col.poly1$WX <- lag.listw(a.lw, col.poly1$X)
 col.poly1$WHOVAL <- lag.listw(a.lw, col.poly1$HOVAL)
 a.lw1 <- nb2listw(col.lags[[1]], style="W")
 a.lw2 <- nb2listw(col.lags[[2]], style="W")

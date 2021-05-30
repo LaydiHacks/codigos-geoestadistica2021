@@ -95,8 +95,8 @@ IVSselect = data[,c("X","Y","mapa.IVS")]
 IVS.rgdb <- db.create(IVSselect,ndim=2,autoname=F)
 IVS.herm <- anam.fit(IVS.rgdb,name="mapa.IVS",type="gaus")
 IVS.hermtrans <- anam.z2y(IVS.rgdb,names="mapa.IVS",anam=IVS.herm)
-IVS.trans <- IVS.hermtrans@items$Gaussian.mapa.IVS
-shapiro.test(IVS.trans) #Normalizo
+IVS_T <- IVS.hermtrans@items$Gaussian.mapa.IVS
+shapiro.test(IVS_T) #Normalizo
 
 
 
@@ -257,24 +257,37 @@ class(localGestis)
 
 mapa.data<-as.data.frame(mapa)
 orden<-nb2listw(gabrielnb, style="W", zero.policy =T)
+WX <- lag.listw(orden, X)
+WY <- lag.listw(orden, Y)
+
 
 formula_modelo = IVS~AGE17+AGE65+AH+CIVILES16+DISC+EN5+log(IPC)+MPAREN+NDS25+NOSEGURO+PMIN+POBREZA+RENT30
 
 #MODELO GNSS (Da Lambda = 0, probamos con Burbin Spatial)
   mod.GNS <- sacsarlm(formula_modelo, listw = orden, data = mapa.data, type = "sacmixed")
   summary(mod.GNS,Nagelkerke=T)
-  mod.GNS2 <- sacsarlm(l_salario ~ desempleo, listw = W2_list, data = spatial_data, type = "sacmixed")
-  summary(mod.GNS2,Nagelkerke=T)
 
-#MODELO DURBIN SPATIAL
+#SDM - MODELO DURBIN SPATIAL 
   lagsd<-lagsarlm(formula_modelo, listw=orden,data=mapa.data, type="Durbin") 
+  summary(lagsd, correlation=TRUE)
+  #Obtener las variables rezagadas
+  W_DISC <- lag.listw(orden, mapa.data$DISC)
+  W_AGE65 <- lag.listw(orden, mapa.data$AGE65)
+  W_RENT30 <- lag.listw(orden, mapa.data$RENT30)
+  W_MPAREN <- lag.listw(orden, mapa.data$MPAREN)
+  LOGIPC =log(IPC)
+  W_IPC <- lag.listw(orden, LOGIPC)
+  W_POBREZA <- lag.listw(orden, mapa.data$POBREZA)
+  nfm_SDM = IVS_T~AGE65+AH+EN5+log(IPC)+MPAREN+NDS25+NOSEGURO+PMIN+POBREZA+RENT30
+  #Nuevo modelo
+  lagsd<-lagsarlm(nfm_SDM, listw=orden,data=mapa.data, type="Durbin")
   summary(lagsd, correlation=TRUE)
   #Otra opción del surbin spatial
   mod.SDEM1 <- errorsarlm(l_salario ~ desempleo, listw = W1_list, data = spatial_data, etype = "emixed")
   summary(mod.SDEM1,Nagelkerke=T)
   #Una forma de limpiar este modelo es optienedo las variables rezagadas e incluirlas en el modelo
   #col.poly1$WX <- lag.listw(a.lw, col.poly1$X) #Varibale rezagada
-  col.lagx <- lagsarlm(CRIME ~ INC + HOVAL + X + WX, data=col.poly1, listw=a.lw) 
+  col.lagx <- lagsarlm(CRIME ~ INC + HOVAL + X + WX, data=mapa.data, listw=orden) 
   
   
   
@@ -313,19 +326,32 @@ formula_modelo = IVS~AGE17+AGE65+AH+CIVILES16+DISC+EN5+log(IPC)+MPAREN+NDS25+NOS
   ols_test_normality(nepal.sarar$residuals)
   moran.test(x=nepal.sarar$residuals,orden,zero.policy =T,randomisation =T,alternative = "two.sided")
   
-##OTROS MODELOS
-  # spautolm:  "SAR" or "CAR" for simultaneous or conditional autoregressions, "SMA" for spatial moving average
-  col.autSAR <- spautolm(CRIME~INC + HOVAL + X + Y, data=as.data.frame(col.poly), listw=col.k5, family="SAR") 
-  summary(col.autSAR, Nagelkerke=T)
-  hetero.plot(col.autSAR)
+###GWR
+  FM_XY = IVS~AGE17+AGE65+AH+CIVILES16+DISC+EN5+log(IPC)+MPAREN+NDS25+NOSEGURO+PMIN+POBREZA+RENT30+X+Y+WX+WY
+  lm.global <- lm(FM_XY, data=mapa.data)
+  summary(lm.global)
+  N_FM_XY  = IVS~AGE65+AH+EN5+log(IPC)+MPAREN+NDS25+NOSEGURO+PMIN+POBREZA+RENT30+X
+  lm.global <- lm(N_FM_XY, data=mapa.data)
+  summary(lm.global)
   
-  col.autCAR <- spautolm(CRIME~INC + HOVAL, data=as.data.frame(col.poly), listw=col.k5, family="CAR") 
-  summary(col.autCAR, Nagelkerke=T)
-  
-  col.autSMA <- spautolm(CRIME~INC + HOVAL + X + Y, data=as.data.frame(col.poly), listw=col.k5, family="SMA") 
-  summary(col.autSMA, Nagelkerke=T)
-  
+  #GW Model
+  # Crossvalidation of bandwidth for geographically weighted regression
+  adapt <- gwr.sel(FM_XY, data=mapa.data, coords=cbind(X,Y)) 
+  #Define Variables DeV: Var Dep  e  InV: Var Indep
+  DeV<-"IVS"
+  IPC = log(IPC)
+  InV<-c("AGE17","AGE65","PMIN","NOSEGURO","NDS25","IPC","MPAREN","CIVILES16","DISC","EN5","X","Y","WX","WY")
 
+  model.sel <- model.selection.gwr(DeV,InV, data =mapa, kernel = "bisquare", adaptive = TRUE, bw = 10)
+  sorted.models <- model.sort.gwr(model.sel, numVars = length(InV), ruler.vector = model.sel[[2]][,2])
+  model.list <- sorted.models[[1]]
+  x11()
+  
+  str(model.view.gwr(DeV, InV, model.list = model.list))
+  model.view.gwr(DeV, InV, model.list = model.list)
+  mejor_bw_gwr <- bw.gwr(FM_XY, data = mapa, approach = "AICc", kernel = "bisquare", adaptive = TRUE)
+  gwr.result<-gwr.basic(FM_XY, data=mapa, kernel="bisquare", adaptive=TRUE, bw=mejor_bw_gwr)
+    
 #=============================================================
 ############### AJUSTE DEL MODELO  ##############
 #=============================================================  
