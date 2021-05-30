@@ -1,24 +1,38 @@
 # Exploracion de datos geoestadisticos
-setwd("D:/CARLOS/Estadistica Espacial/Estadistica Espacial/Geoestadística/Ejercicios")
-source("aquifer.r")
-attach(aquifer)
+
+source("db/aquifer.r")
+attach(aquifer) #Attach es para asignar las variables
+easting #Es una variables definida en aquifer, y definida gracias al Attach.
+
+#Visualizar los puntos
 plot(easting,northing,pch=20,xlab="longitud",ylab="latitud")
+
+#Visualizar los valores en el mapa
 plot(easting,northing,type="n",xlab="longitud",ylab="latitud")
 text(easting,northing,head,cex=0.6)
-library(scatterplot3d)
+
+#GrÃ¡ficos 3D
+library(scatterplot3d) 
 scatterplot3d(easting,northing,head,xlab="longitud",ylab="latitud",zlab="altura")
+#Este grafico puede ser util para ver si existe tendencia en el espacio... 
 detach(aquifer)
 
-# Estimacion del variograma
+#Configurar los datos
 library(geoR)
-aq.geo<-as.geodata(aquifer)
+aq.geo<-as.geodata(aquifer) #Convertir los datos en una GeoData
+class(aq.geo) 
+
+#Panel de grÃ¡ficos, histograma, funciÃ³n de densidad
 plot.geodata(aq.geo)
 
-# estimador clásico
+# estimador clÃ¡sico
 aq.cl1<-variog(aq.geo,option="cloud")
 plot(aq.cl1,pch=20)
-aq.v1<-variog(aq.geo, uvec=seq(0,260,20))                # uvec: inin dist, fin dist, tamaño rezago (lag)
+
+aq.v1<-variog(aq.geo, uvec=seq(0,260,20))                # uvec: inin dist, fin dist, tama?o rezago (lag)
 plot(aq.v1,pch=20)
+
+
 aq.vc1<-variog(aq.geo, uvec=seq(0,260,20), bin.cloud=T)  # las nubes de semivarianza son incluidas en cada bin, util para analizar la variabilidad local e inclusive detectar atipicos.
 plot(aq.vc1,bin.cloud=T)
 
@@ -40,15 +54,15 @@ plot(variog(aq.geo,uvec=seq(0,280,40)))
 plot(variog(aq.geo,uvec=seq(0,300,50)))
 plot(variog(aq.geo,uvec=seq(0,320,80)))
 
-# Superposición del variograma empírico y de un modelo de variograma
-aq.exp.ml<-likfit(geodata = aq.geo, ini = c(500000, 150))
-aq.sph.ml<-likfit(geodata = aq.geo, ini = c(500000, 150),cov.model="sph")
+# Superposici?n del variograma emp?rico y de un modelo de variograma
+aq.exp.ml<-likfit(geodata = aq.geo, ini = c(500000, 150)) #Exponencial
+aq.sph.ml<-likfit(geodata = aq.geo, ini = c(500000, 150),cov.model="sph") #Esferico 
 aq.mat.ml<-likfit(geodata = aq.geo, ini = c(500000, 150),cov.model="mat",kappa=1.5)
 aq.mat2.ml<-likfit(geodata = aq.geo, ini = c(500000, 150),cov.model="mat",kappa=1,fix.nugget=T)
 aq.cir.ml<-likfit(geodata = aq.geo, ini = c(500000, 150),cov.model="cir")
 aq.gau.ml<-likfit(geodata = aq.geo, ini = c(500000, 50),cov.model="gau")
 aq.cub.ml<-likfit(geodata = aq.geo, ini = c(500000, 150),cov.model="cub")
-aq.pow.ml<-likfit(geodata = aq.geo, ini = c(500000, 150),cov.model="powered.exponential",kappa=1.75)
+aq.pow.ml<-likfit(geodata = aq.geo, ini = c(500000, 150),cov.model="powered.exponential",kappa=1.75) #Estable
 aq.pow2.ml<-likfit(geodata = aq.geo, ini = c(500000, 150),cov.model="powered.exponential",kappa=1.75,fix.nugget=T)
 plot(aq.v1)
 lines(aq.pow2.ml,max.dist=250,lwd=3,col='red')
@@ -62,44 +76,47 @@ lines(aq.exp.ml,max.dist=250,lwd=3,col='magenta')
 lines(aq.sph.ml,max.dist=250,lwd=3,col='pink')
 # los mejores son el 'mat' y el 'powered.exponential'
 
-# Diferentes metodos de ajuste del variograma
-aq.mat.ml<-likfit(geodata = aq.geo, ini = c(500000, 150),cov.model="mat",kappa=1.5)
-aq.mat.rml<-likfit(geodata = aq.geo, ini = c(500000, 150),cov.model="mat",kappa=1.5,method='RML')
-aq.mat.ols<-variofit(vario = aq.v1, ini = c(300000, 100),cov.model="mat",kappa=1.5,weights="equal",minimisation.function="optim")
-aq.mat.wls<-variofit(vario = aq.v1, ini = c(500000, 150),cov.model="mat",kappa=1.5,weights="npairs")
+# Diferentes metodos de ajuste del variograma 
+aq.mat.ml<-likfit(geodata = aq.geo, ini = c(500000, 150),cov.model="mat",kappa=1.5) #Exponencial con maxima verisimilutd 
+aq.mat.rml<-likfit(geodata = aq.geo, ini = c(500000, 150),cov.model="mat",kappa=1.5,method='RML')  #Exponencial con maxima verisimilutd Restringida
+aq.mat.ols<-variofit(vario = aq.v1, ini = c(300000, 100),cov.model="mat",kappa=1.5,weights="equal",minimisation.function="optim")  #MCO
+aq.mat.wls<-variofit(vario = aq.v1, ini = c(500000, 150),cov.model="mat",kappa=1.5,weights="npairs") #MCO por parejas
 aq.pow.ml<-likfit(geodata = aq.geo, ini = c(500000, 150),cov.model="powered.exponential",kappa=1.75)
 aq.pow.rml<-likfit(geodata = aq.geo, ini = c(500000, 150),cov.model="powered.exponential",kappa=1.75,method='RML')
 aq.pow.ols<-variofit(vario = aq.v1, ini = c(500000, 150),cov.model="powered.exponential",kappa=1.75,weights="equal",minimisation.function="optim")
 aq.pow.wls<-variofit(vario = aq.v1, ini = c(500000, 150),cov.model="powered.exponential",kappa=1.75,weights="npairs")
-plot(aq.v1)
-lines(aq.mat.ml,max.dist=250,lwd=3)
-lines(aq.mat.rml,max.dist=250,lwd=3,lty=2)
-lines(aq.mat.ols,max.dist=250,lwd=3,lty=3)
-lines(aq.mat.wls,max.dist=250,lwd=3,lty=4)
-legend(locator(1),legend=c('ML','RML','OLS','WLS'),,lwd=c(3,3,3,3),lty=c(1,2,3,4))
-plot(aq.v1)
-lines(aq.pow.ml,max.dist=250,lwd=3)
-lines(aq.pow.rml,max.dist=250,lwd=3,lty=2)
-lines(aq.pow.ols,max.dist=250,lwd=3,lty=3)
-lines(aq.pow.wls,max.dist=250,lwd=3,lty=4)
-legend(20,2000000,legend=c('ML','RML','OLS','WLS'),lwd=c(3,3,3,3),lty=c(1,2,3,4))
+  
+  #GrÃ¡ficar!!
+  plot(aq.v1)
+  lines(aq.mat.ml,max.dist=250,lwd=3)
+  lines(aq.mat.rml,max.dist=250,lwd=3,lty=2)
+  lines(aq.mat.ols,max.dist=250,lwd=3,lty=3)
+  lines(aq.mat.wls,max.dist=250,lwd=3,lty=4)
+  legend(locator(1),legend=c('ML','RML','OLS','WLS'),,lwd=c(3,3,3,3),lty=c(1,2,3,4))
+  plot(aq.v1)
+  lines(aq.pow.ml,max.dist=250,lwd=3)
+  lines(aq.pow.rml,max.dist=250,lwd=3,lty=2)
+  lines(aq.pow.ols,max.dist=250,lwd=3,lty=3)
+  lines(aq.pow.wls,max.dist=250,lwd=3,lty=4)
+  legend(20,2000000,legend=c('ML','RML','OLS','WLS'),lwd=c(3,3,3,3),lty=c(1,2,3,4))
+  
+  var4 <- variog4(aq.geo, max.dist=250)
+  plot(var4)
 
-var4 <- variog4(aq.geo, max.dist=250)
-plot(var4)
-
-library(intamap)
+#Evaluar probelmas de Anisontropia
+library(intamap) 
 coordinates(aquifer) <- ~easting+northing
 estimateAnisotropy(aquifer,"head")
 
 # Calculo de superficies de tendencia
 library(spatial)
-attach(aquifer)
 aq.ls<-surf.ls(3,easting,northing,head)
 aq.trsurf<-trmat(aq.ls, -150, 120, 0, 190, 100)
 
 summary(lm(aquifer$head~aquifer$easting+aquifer$northing))
 
-# Representación de superficies de tendencia
+
+# Representaci?n de superficies de tendencia
 par(pty="s",mar=c(2,2,2,2))
 contour(aq.trsurf)
 points(easting,northing,pch=20)
@@ -112,16 +129,24 @@ persp(aq.trsurf,theta=60,phi=30,col=2,ltheta=-20,shade=0.25,xlab="longitud",ylab
 detach(aquifer)
 
 # Eliminacion de tendencias
-aq.sin<-aquifer[,3]-predict(aq.ls,aquifer[,1],aquifer[,2])
+aq.ls<-surf.ls(1,easting,northing,head) #Orden 1
+model1 = lm(head~easting+northing, data=aquifer)#Generamos el modelo
+aq.sin<-residuals(model1) #Guardamos los residuales
+#aq.sin<-aquifer[,3]-predict(aq.ls,aquifer[,1],aquifer[,2]) #Otra forma de hacerlo, No recomendado
 aqs.geo<-aq.geo
-aqs.geo$data<-aq.sin
-plot.geodata(aqs.geo)
-plot(variog(aqs.geo),pch=20)
+aqs.geo$data<-aq.sin #Asigno los residuos al data
+plot.geodata(aqs.geo) #Panel para los residuos - Ya no hay tendencia, sin embargo hacemos prueba de normalidad
+shapiro.test(residuals(model1)) #Son normales
+plot(variog(aqs.geo),pch=20)  #GrÃ¡fica de semivariograma Residuos con la distancia completa INCORRECTO
+aqs.v1<-variog(aqs.geo,uvec=seq(0,100,10),max.dist=120) #Semivariograma experimental con la distancia correcta 
+plot(aqs.v1) #Plot Semivariograma
 
-aqs.v1<-variog(aqs.geo,uvec=seq(0,100,10),max.dist=120)
-plot(aqs.v1)
 
 # Estimacion del variograma sin tendencia
+aquifers <- data.frame(aqs.geo$coords,aq.sin) #Construimos DataFrama
+coordinates(aquifers) <- ~easting+northing #Spatial Points 
+estimateAnisotropy(aquifers, "aq.sin") #Calcular anisontropia - False, lo cual indica que no depende de las direcciones
+
 aqs.exp.ml<-likfit(geodata = aqs.geo, ini = c(30000, 50))
 aqs.sph.ml<-likfit(geodata = aqs.geo, ini = c(30000, 50),cov.model="sph")
 aqs.mat.ml<-likfit(geodata = aqs.geo, ini = c(30000, 50),cov.model="mat",kappa=1.5)
