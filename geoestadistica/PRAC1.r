@@ -103,7 +103,7 @@ aq.pow.wls<-variofit(vario = aq.v1, ini = c(500000, 150),cov.model="powered.expo
   var4 <- variog4(aq.geo, max.dist=250)
   plot(var4)
 
-#Evaluar probelmas de Anisontropia
+#Evaluar problemas de Anisontropia
 library(intamap) 
 coordinates(aquifer) <- ~easting+northing
 estimateAnisotropy(aquifer,"head")
@@ -145,8 +145,9 @@ plot(aqs.v1) #Plot Semivariograma
 # Estimacion del variograma sin tendencia
 aquifers <- data.frame(aqs.geo$coords,aq.sin) #Construimos DataFrama
 coordinates(aquifers) <- ~easting+northing #Spatial Points 
-estimateAnisotropy(aquifers, "aq.sin") #Calcular anisontropia - False, lo cual indica que no depende de las direcciones
+estimateAnisotropy(aquifers, "aq.sin") #Calcular anisontropia - False, lo cual indica que no depende de las direcciones y no se necesita ninguna rotación sino que se puede trabajar directamente
 
+  #Diferentes Ajustes
 aqs.exp.ml<-likfit(geodata = aqs.geo, ini = c(30000, 50))
 aqs.sph.ml<-likfit(geodata = aqs.geo, ini = c(30000, 50),cov.model="sph")
 aqs.mat.ml<-likfit(geodata = aqs.geo, ini = c(30000, 50),cov.model="mat",kappa=1.5)
@@ -156,6 +157,7 @@ aqs.gau.ml<-likfit(geodata = aqs.geo, ini = c(30000, 50),cov.model="gau")
 aqs.cub.ml<-likfit(geodata = aqs.geo, ini = c(30000, 50),cov.model="cub")
 aqs.pow.ml<-likfit(geodata = aqs.geo, ini = c(30000, 50),cov.model="powered.exponential",kappa=1.75)
 aqs.pow2.ml<-likfit(geodata = aqs.geo, ini = c(30000, 50),cov.model="powered.exponential",kappa=1.75,fix.nugget=T)
+#Vemos todos los valores de la verosimilitud y se escoje el valor más positivo o menos negativo. 
 plot(aqs.v1)
 lines(aqs.pow2.ml,max.dist=100,lwd=2,col='red')
 lines(aqs.mat2.ml,max.dist=100,lwd=2,col='blue')
