@@ -1,5 +1,5 @@
-#save.image("D:/CARLOS/Estadistica Espacial/Drive Estadistica Espacial/Geoestadística/Ejercicios/geospt")
-load("D:/CARLOS/Estadistica Espacial/Drive Estadistica Espacial/Geoestadística/Ejercicios/geospt")
+#save.image("D:/CARLOS/Estadistica Espacial/Drive Estadistica Espacial/Geoestad?stica/Ejercicios/geospt")
+load("D:/CARLOS/Estadistica Espacial/Drive Estadistica Espacial/Geoestad?stica/Ejercicios/geospt")
 
 library(geospt)
 data(preci)
@@ -8,12 +8,14 @@ coordinates(preci) <- ~x+y
 puntos<-expand.grid(x=seq(min(preci$x),max(preci$x),0.05),y=seq(min(preci$y),max(preci$y),0.05))
 coordinates(puntos) <- ~x+y
 
+#OptimizaciÃ³n de parametros
 op.tps <- graph.rbf(prec~1, preci, eta.opt=TRUE, rho.opt=TRUE, n.neigh=9, func="TPS", 
           eta.dmax=2, rho.dmax=2, x0=c(0.1,0.1), iter=500)
 
 op.tps1 <- graph.rbf(prec~x+y, preci, eta.opt=TRUE, rho.opt=TRUE, n.neigh=9, func="TPS", 
                     eta.dmax=2, rho.dmax=2, x0=c(0.1,0.1), iter=500)
 
+#Establezco los parametros
 pred.rbf <- rbf(prec~1, preci, eta=0.1503637, rho=0.01118794, newdata=puntos, n.neigh=10, func="TPS")
 coordinates(pred.rbf) = c("x", "y")
 gridded(pred.rbf) <- TRUE
@@ -21,9 +23,9 @@ gridded(pred.rbf) <- TRUE
 spplot(pred.rbf["var1.pred"], cuts=40, col.regions=bpy.colors(100),main = "", key.space=list(space="right", cex=0.8))
 
 tabla <- rbf.tcv(prec~1, preci, eta=0.1503637, rho=0.01118794, n.neigh=9, func="TPS")
-criterio.cv(tabla)
+criteria.cv(tabla)
 
-
+#Ejercicio con una base de datos real
 library(geosptdb)
 data(croatia)
 data(croatiadb)
