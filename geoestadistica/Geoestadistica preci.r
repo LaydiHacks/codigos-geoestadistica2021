@@ -44,9 +44,9 @@ par(mfrow=c(nrow=1, ncol=1))
 # Verificación del supuesto de normalidad para los métodos lineales de kriging.
       # Opciones para tranformar:
       # boxcox.fit(geoR), para un 'vector' de datos
-      # boxcox.geodata(), para un objeto de tipo 'geodata'
+      # boxcox(), para un objeto de tipo 'geodata' con GeoR
 
-shapiro.test(prec)
+shapiro.test(prec) #Esta variable ya sigue una distribución normal
 n.q <- (prec-mean(prec))/sd(prec)            #Función prec
 n.o <- order(n.q)                            # Lista con las posiciones de los datos ordenados
 n.qo <- n.q[n.o]                             # Vector de cuantiles estandarizados y ordenados. Necesarios para prueba K-S
@@ -81,12 +81,16 @@ v <- variogram(prec~1, loc=~x+y, cutoff=1, cressie = F, data=preci, cloud=TRUE)
 # Para el ejemplo los parámetros de la función de covarianza son tomados del programa ArcGIS
 # Funcionamiento con un vecindario de tamaño 5
 
-xy <- preci[,2:3]
+#Este ejemplo se ve en el Excel 
+# https://docs.google.com/spreadsheets/d/15qw3LAVmH0d8jNIJPysqZwzinwNMQnE_/edit#gid=1556490607 
+
+
+#Tomar los datos de la precipitación 
+xy <- preci[,2:3]  
 z <- preci$prec
 mu = mean(z)                                                          # Media de la variable regionalizada
 So <- c(3,4)                                                          # Coordenadas del punto a estimar
 m.dist <- as.matrix(dist(rbind(xy,So)))                               # matriz de distancias
-#D<-spDists(as.matrix(preci[,2:3]),longlat=F)
 dist.So <- m.dist[nrow(m.dist),1:(ncol(m.dist)-1)]                    # vector de distancias al punto So.
 vec.orden <- order(dist.So)                                           # vecinos ordenados
 dist.vec.cerca <- dist.So[vec.orden[1:5]]                             # vecinos mas cercanos "5"

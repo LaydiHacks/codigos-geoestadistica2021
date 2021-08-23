@@ -2,6 +2,27 @@
 #---------------------------Viviana Bautista - Alejandro Dimate Rodriguez------------------------#
 #------------AN?LISIS GEOESTAD?STICO DE INDICE DE VENTAJA SOCIECONOMICA NEW YORK 2010-2014--------#
 
+url_local = "GEOESTADISTICA/codigos-geoestadistica2021/"
+
+#Instalar Paquetes
+install.packages("Rcpp")
+install.packages("spgwr")
+install.packages("raster")
+install.packages("tmap")
+install.packages("lmtest")
+install.packages("RColorBrewer")
+install.packages("classInt")
+install.packages("spdep")
+install.packages("sphet")
+install.packages("pgirmess")
+install.packages("spatialreg")
+install.packages("dbscan")
+install.packages("adespatial")
+install.packages("rgdal")
+#Cargar Paquetes y Funciones
+library(sp)
+library(Rcpp) 
+library(spData)
 library(spgwr)
 library(raster)
 library(tmap)
@@ -15,31 +36,31 @@ library(spatialreg)
 library(dbscan)
 library(adespatial)
 library(rgdal)
-library(RGeostats)
-source("funciones/northarrow.r")
-source("funciones/scalebar.R")
-source("funciones/moran.R")
-source("funciones/geary.R")
-source("funciones/moranbi.test.R")
-source("funciones/randomize_vector.R")
-source("funciones/moran.cluster.R")
-source("funciones/moran.bi.R")
-source("funciones/moran.cluster.R")
-source("funciones/getis.cluster.R")
-source("funciones/localmoran.bi.R")
-source("funciones/moranbi.plot.R") 
-source("funciones/quantile.e.R")
-source("funciones/sp.na.omit.R")
-source("funciones/correlogram.d.R")
-source("funciones/sp.correlogram.R")
-source("funciones/spcorrelogram.bi.R")
-source("funciones/moran.bi1.R")
-source("funciones/moranbi1.test.R")
-source("funciones/geary.bi.R")
-source("funciones/test.w.R")
+library(RGeostats) #Instalar poe Zip
+source(paste(url_local,"funciones/northarrow.r", sep=""))
+source(paste(url_local,"funciones/scalebar.R", sep=""))
+source(paste(url_local,"funciones/moran.R", sep=""))
+source(paste(url_local,"funciones/geary.R", sep=""))
+source(paste(url_local,"funciones/moranbi.test.R", sep=""))
+source(paste(url_local,"funciones/randomize_vector.R", sep=""))
+source(paste(url_local,"funciones/moran.cluster.R", sep=""))
+source(paste(url_local,"funciones/moran.bi.R", sep=""))
+source(paste(url_local,"funciones/moran.cluster.R", sep=""))
+source(paste(url_local,"funciones/getis.cluster.R", sep=""))
+source(paste(url_local,"funciones/localmoran.bi.R", sep=""))
+source(paste(url_local,"funciones/moranbi.plot.R", sep="")) 
+source(paste(url_local,"funciones/quantile.e.R", sep=""))
+source(paste(url_local,"funciones/sp.na.omit.R", sep=""))
+source(paste(url_local,"funciones/correlogram.d.R", sep=""))
+source(paste(url_local,"funciones/sp.correlogram.R", sep=""))
+source(paste(url_local,"funciones/spcorrelogram.bi.R", sep=""))
+source(paste(url_local,"funciones/moran.bi1.R", sep=""))
+source(paste(url_local,"funciones/moranbi1.test.R", sep=""))
+source(paste(url_local,"funciones/geary.bi.R", sep=""))
+source(paste(url_local,"funciones/test.W.R", sep=""))
 
-
-shp <- "db/ventajasocioeconomica/condados/newyork.shp" 
+shp_url = "db/ventajasocioeconomica/condados/newyork.shp" 
+shp <-paste(url_local,shp_url, sep="")
 mapa <- readOGR(shp)
 
 
@@ -49,7 +70,7 @@ mapa <- readOGR(shp)
 ###############################################
 
 
-IVS <- as.data.frame(mapa)$IVS
+IVS <- as.data.frame(mapa)$IVS_TP
 DISC<- as.data.frame(mapa)$DISC
 AGE17<- as.data.frame(mapa)$AGE17
 AGE65<- as.data.frame(mapa)$AGE65
@@ -70,7 +91,7 @@ POBREZA<- as.data.frame(mapa)$POBREZA
 coords <- coordinates(mapa)
 X = coords[,1]
 Y = coords[,2]
-data  <- data.frame(mapa$IVS, X,Y)
+data  <- data.frame(mapa$IVS_TP, X,Y)
 
 
 ###############################################
@@ -85,18 +106,21 @@ qqnorm(mapa@data$IVS)
 qqline(mapa@data$IVS)
 
 
-
 ###############################################
-#######     Amorfosis Gaussiana       #########
+#######     Preparación de Datos      #########
 ###############################################
 
+#Se realizó una traslación de datos al cuadrante positivo
+mapa$IVS_TP <- mapa$IVS + 10
+boxplot(mapa$IVS_TP,col="seagreen3",ylab="TEXTODELEJE")
+hist(mapa$IVS_TP)
+summary(mapa$IVS_TP)
+shapiro.test(mapa$IVS_TP)
+qqnorm(mapa@data$IVS_TP)
+qqline(mapa@data$IVS_TP)
+IVS <- as.data.frame(mapa)$IVS_TP
+mapa$IVS <- mapa$IVS_TP
 
-IVSselect = data[,c("X","Y","mapa.IVS")] 
-IVS.rgdb <- db.create(IVSselect,ndim=2,autoname=F)
-IVS.herm <- anam.fit(IVS.rgdb,name="mapa.IVS",type="gaus")
-IVS.hermtrans <- anam.z2y(IVS.rgdb,names="mapa.IVS",anam=IVS.herm)
-IVS_T <- IVS.hermtrans@items$Gaussian.mapa.IVS
-shapiro.test(IVS_T) #Normalizo
 
 
 
@@ -220,6 +244,7 @@ orden<-nb2listw(gabrielnb, style="W", zero.policy =T)
 
 ################################
 ####### I de Moran Global ######
+
 set.seed(123)
 moran.test(y,orden,zero.policy =T,randomisation =T,alternative = "two.sided") 
 moran.plot(z_y,quiet=F,zero.policy =T,listw=orden,xlab = "IVS", ylab = "W IVS")
@@ -252,7 +277,9 @@ class(localGestis)
 
 
 #=============================================================
+##########################################
 ############### MODELOS  ##############
+##########################################
 #=============================================================
 
 mapa.data<-as.data.frame(mapa)
@@ -260,12 +287,48 @@ orden<-nb2listw(gabrielnb, style="W", zero.policy =T)
 WX <- lag.listw(orden, X)
 WY <- lag.listw(orden, Y)
 
+#=============================================================
+############### MODELO CLASICO - LINEAL  ##############
+#=============================================================
 
-formula_modelo = IVS~AGE17+AGE65+AH+CIVILES16+DISC+EN5+log(IPC)+MPAREN+NDS25+NOSEGURO+PMIN+POBREZA+RENT30
+formula_modelo = IVS~AGE65+AH+EN5+log(IPC)+MPAREN+NDS25+NOSEGURO+PMIN+POBREZA+DISC+AGE17+CIVILES16
+mclasico<-lm(formula_modelo,data = mapa.data)
+summary(mclasico)
+#Sacamos las variables no significativas
+formula_mc <- IVS~AGE65+AH+EN5+log(IPC)+MPAREN+NDS25+NOSEGURO+PMIN+POBREZA
+mejorclasico<-lm(formula_mc, data=mapa.data)
+summary(mejorclasico)
+
+# Validación supuestos
+bptest(mejorclasico)
+resettest(mejorclasico)
+raintest(mejorclasico)
+shapiro.test(residuals(mejorclasico))
+library(car)
+vif(mejorclasico)
+
+BCresiduos <- mapa
+residuos$mc <-residuals(mejorclasico)
+spplot(residuos, "mc", col.regions = rev(terrain.colors(20))) #Mapa de Residuos
+shapiro.test(residuos$mc)  
+bptest(mejorclasico)
+lm.morantest(mejorclasico,orden) 
+#Corremos todas las pruebas
+pruebas <- lm.LMtests(mejorclasico, listw = orden, test = "all")
+summary(pruebas)
+
+#=============================================================
+############### MODELO SPATIAL LAG  ##############
+#=============================================================
+formula_mc <- IVS~AGE65+AH+EN5+log(IPC)+MPAREN+NDS25+NOSEGURO+PMIN+POBREZA
+msl<-lagsarlm(formula_modelo,data=mapa,listw = orden,method="eigen")
+summary(msl, Nagelkerke=T, correlation=TRUE)
+rsml<-residuals.sarlm(msl)
+moran.test(x=rsml,orden,zero.policy =T,randomisation =T,alternative = "two.sided")
 
 #MODELO GNSS (Da Lambda = 0, probamos con Burbin Spatial)
-  mod.GNS <- sacsarlm(formula_modelo, listw = orden, data = mapa.data, type = "sacmixed")
-  summary(mod.GNS,Nagelkerke=T)
+mod.GNS <- sacsarlm(formula_modelo, listw = orden, data = mapa.data, type = "sacmixed")
+summary(mod.GNS,Nagelkerke=T)
 
 #SDM - MODELO DURBIN SPATIAL 
   lagsd<-lagsarlm(formula_modelo, listw=orden,data=mapa.data, type="Durbin") 
@@ -290,31 +353,9 @@ formula_modelo = IVS~AGE17+AGE65+AH+CIVILES16+DISC+EN5+log(IPC)+MPAREN+NDS25+NOS
   col.lagx <- lagsarlm(CRIME ~ INC + HOVAL + X + WX, data=mapa.data, listw=orden) 
   
   
-  
-#MODELO CL?SICO
-  mclasico<-lm(formula_modelo,data = mapa.data)
-  summary(mclasico)
-  #Sacamos las variables no significativas
-  formula_mc = IVS~AGE65+AH+EN5+log(IPC)+MPAREN+NDS25+NOSEGURO+PMIN+POBREZA+RENT30
-  mejorclasico<-lm(formula_mc, data=mapa.data)
-  summary(mejorclasico)
-  
-  residuos <- mapa
-  residuos$mc <-residuals(mejorclasico)
-  spplot(residuos, "mc", col.regions = rev(terrain.colors(20))) #Mapa de Residuos
-  shapiro.test(residuosclasico)  
-  bptest(mejorclasico)
-  lm.morantest(mejorclasico,orden) 
-  #Corremos todas las pruebas
-  pruebas <- lm.LMtests(mejorclasico, listw = orden, test = "all")
-  summary(pruebas)
 
-##MODELO SPATIAL LAG
-  msl<-lagsarlm(formula_modelo,data=mapa,listw = orden,method="eigen")
-  summary(msl, Nagelkerke=T, correlation=TRUE)
-  rsml<-residuals.sarlm(msl)
-  ols_test_normality(residuals.sarlm(msl))
-  moran.test(x=rsml,orden,zero.policy =T,randomisation =T,alternative = "two.sided")
+
+
 
 ## SARAR - AUTOREGRESIVO EN EL ERROR
   m.sarar <- sacsarlm(formula_modelo, data=mapa.data, listw=orden, method="eigen")    
@@ -393,22 +434,24 @@ formula_modelo = IVS~AGE17+AGE65+AH+CIVILES16+DISC+EN5+log(IPC)+MPAREN+NDS25+NOS
   }
   hetero.plot(col.lag.sm)
   
+
+
+
+  # Transformación Box-Cox
+  BC <-  boxCox(formula_mc, data = mapa.data, lambda = seq(-3, 3, len = 20))
+  lambda <- BC$x[which.max(bc$y)]
+  IVS_BC = (mapa$IVS^lambda - 1)/lambda
+  formula_mc <- IVS_BC ~ AH+EN5+log(IPC)+MPAREN+NDS25
+  mejorclasico<-lm(formula_mc)
+  summary(mejorclasico)
   
-#=============================================================
-############### VALIDACIÃ“N DEL MODELO ##############
-#=============================================================  
+ 
   
-# ValidaciÃ³n supuestos al MODELO
-  bptest(mejorclasico) #Brush Pagan 
-  resettest(mejorclasico)
-  raintest(mejorclasico)
-  shapiro.test(residuals(mejorclasico)) # p-value >0.05 Normal los residuos
-  library(car)
-  # Factor de inflation de varianza. Si 0-5 multicolinenaddad baja, 5-10, >10 multicolineadli muy alta
-  vif(mejorclasico) 
-  
-
-
-
-
+  #######     Amorfosis Gaussiana       #########
+  IVSselect = data[,c("X","Y","mapa.IVS")] 
+  IVS.rgdb <- db.create(IVSselect,ndim=2,autoname=F)
+  IVS.herm <- anam.fit(IVS.rgdb,name="mapa.IVS",type="gaus")
+  IVS.hermtrans <- anam.z2y(IVS.rgdb,names="mapa.IVS",anam=IVS.herm)
+  IVS_T <- IVS.hermtrans@items$Gaussian.mapa.IVS
+  shapiro.test(IVS_T) #Normalizo
 
