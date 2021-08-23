@@ -307,7 +307,7 @@ shapiro.test(residuals(mejorclasico))
 library(car)
 vif(mejorclasico)
 
-BCresiduos <- mapa
+residuos <- mapa
 residuos$mc <-residuals(mejorclasico)
 spplot(residuos, "mc", col.regions = rev(terrain.colors(20))) #Mapa de Residuos
 shapiro.test(residuos$mc)  
