@@ -45,8 +45,6 @@ o.nb <- read.gal ("datos-area/ejercicios-parcial/ejercicio-ukn1/UK.N1.gal", over
 a.lw <- nb2listw(o.nb, style="W")
 ?read.gal
 
-mapa@data
-
 # Gráfico de dispersión del índice de Moran
 
 mp<-moran.plot(mapa$GVA,a.lw, main="Gráfico de Dispersión de Moran")
@@ -81,4 +79,42 @@ lm.morantest(mejorclasico,a.lw)
 pruebas <- lm.LMtests(mejorclasico, listw=a.lw, test = "all")
 summary(pruebas)
 
+#################
+# BIVARIADO MORAN
 
+mapa@data
+
+moran.bi(mapa$GVA, mapa$Lbr_Prd,a.lw,zero.policy =T)
+set.seed(123)
+
+mbi_prodg <- moranbi.test(X=mapa$Lbr_Prd,Y=mapa$GVA,a.lw,zero.policy =T,adjust.n=TRUE,N=999,graph=T,print.results=T)
+mbi_prod <- moranbi1.test(x=mapa$GVA,y=mapa$Lbr_Prd,a.lw, zero.policy =T,randomisation =T, alternative="two.sided",adjust.n=TRUE)
+
+mbi_natg <- moranbi.test(X=mapa$Bsn_B_R,Y=mapa$GVA,a.lw,zero.policy =T,adjust.n=TRUE,N=999,graph=T,print.results=T)
+mbi_nat <- moranbi1.test(x=mapa$Bsn_B_R,y=mapa$GVA,a.lw, zero.policy =T,randomisation =T, alternative="two.sided",adjust.n=TRUE)
+
+##########################33
+# Correlograma Bivariado
+
+col_nbq1 <- poly2nb(mapa)
+corbi.ci <- spcorrelogram.bi(col_nbq1, mapa$GVA, mapa$Lbr_Prd, a.lw ,order=3, method="I", style="W", randomisation =T, zero.policy=T,alternative="two.sided")
+corbi.ci <- spcorrelogram.bi(col_nbq1, mapa$GVA, mapa$Bsn_B_R, a.lw ,order=3, method="I", style="W", randomisation =T, zero.policy=T,alternative="two.sided")
+corbi.ci
+plot(corbi.ci)
+plot.spcorbi(corbi.ci,main="Bivariate GVA  -  NAT")
+
+# Gráfico de dispersión del índice de Moran
+
+x11()
+mp<-moran.plot(mapa$Lbr_Prd, a.lw, main="Gráfico de Dispersión de Moran")      # Cambiar por "x1", para la estandarización
+mp<-moran.plot(mapa$Bsn_B_R, a.lw, main="Gráfico de Dispersión de Moran")      # Cambiar por "x1", para la estandarización
+
+
+###########################3
+# LISA - BILISA
+
+# LISA Cluster Map
+moran.cluster(mapa$GVA, a.lw, zero.policy = T, mapa, significant=T)
+
+LMCI <- localmoran.bi(mapa$GVA, mapa$Lbr_Prd, a.lw, zero.policy =T)
+LMCH <- localmoran.bi(col.poly@data$CRIME, col.poly@data$HOVAL, a.lwq1, zero.policy =T)
