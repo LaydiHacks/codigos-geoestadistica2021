@@ -272,10 +272,21 @@ puntos<-expand.grid(x=seq(min(preci$x),max(preci$x),0.02), y=seq(min(preci$y),ma
 plot(puntos)
 coordinates(puntos) = c("x", "y")
 gridded(puntos) <- TRUE
+
 pron.pts.ki <- krige(I(preci$prec<=420)~1, pts, puntos, vgm(0.2831, "Sph", 6.9642, nugget=0.0929), nmax=10)     # Kriging Ordinario
 pki <- spplot(pron.pts.ki, "var1.pred", main="Prec. Media Anual Predicciones \nKriging Indicador", col.regions=bpy.colors(100), cuts=10, cex.main=0.7, scales = list(draw =T), xlab="Este (m)", ylab = "Norte (m)", key.space=list(space="right", cex=0.6))
 pkiv <- spplot(pron.pts.ki, "var1.var", main="Prec. Media Anual Errores \nKriging Indicador", col.regions=bpy.colors(100), cuts=10, cex.main=0.7, scales = list(draw =T), xlab="Este (m)", ylab = "Norte (m)", key.space=list(space="right", cex=0.6))
 
+
+# Otra forma de escribirlo, segun la clase
+preci$I = ifelse(preci$prec<=420, 1,0)
+xy <- preci[,2:3] 
+library(gstat)
+library(sp)
+pts = data.frame(xy, z=z)
+coordinates(pts) <- ~x+y
+So <- as.data.frame(cbind(x=So[1], y=So[2]))
+krige(I(preci$prec<=420)~1, pts, So, vgm(0.28306, "Sph", 6.9642, nugget=0), nmax = 5)
 
 
                              ######################################################
