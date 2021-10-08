@@ -39,8 +39,9 @@ library(maps)
 # ---------------------------------------------------------------------------------------------------------
 
 # ------------------------------------------ CARGAR LA BASE DE DATOS ------------------------------------------------
-load("/Geoestadística- Croacia/Geoestadística- Croacia/Datos/IDSTA.ov.rda")
-load("/Geoestadística- Croacia/Geoestadística- Croacia/Datos/croatia.grilla 25s.2008.rda")
+setwd("GEOESTADISTICA/codigos-geoestadistica2021/")
+load("geoestadistica/proyecto-20211/IDSTA.ov.rda")
+load("geoestadistica/proyecto-20211/croatia.grilla 25s.2008.rda")
 
 temp.geor<-as.data.frame(IDSTA.ov)#Geodata (coordenadas y datos)
 datos_temp<-temp.geor[c("HRdem","HRdsea","HRtwi","Lat","Lon","LST2008_03_05")]#Lon, Lat, Coordendas geogr?ficas
@@ -48,6 +49,7 @@ names(datos_temp)<-c("HRdem","HRdsea","HRtwi","Lat","Lon","Temperatura")
 dim(datos_temp)#DIMENSI?N DE LA BASE DE DATOS
 names(datos_temp)#Nombre de los atributos
 class(IDSTA.ov)#"SpatialPointsDataFrame"
+
 croacia<-data.frame(datos_temp,IDSTA.ov@coords)
 
 #Hay valores nulos en  las columnas
@@ -147,18 +149,6 @@ qplot(temp.anam,geo m="density",col=I("blue"),fill=I("blue"), alpha=I(0.2), main
 tempnst<-data.frame(Bd_datostemp,temp.anam)
 temp.geof<-as.geodata(tempnst,coords.col = 7:8,data.col =9) 
 summary(temp.geof)
-# -------------------------------------------ANISOTROPÍA-------------------------------------------------------
-Dmax<-sqrt((max(Bd_datostemp[, 7])-min(Bd_datostemp[,7]))^2+(max(Bd_datostemp[,8])-min(Bd_datostemp[,8]))^2)
-Dusar<-Dmax/2
-coordinates(tempnst)=~Este+Norte
-anisotropia<-estimateAnisotropy(tempnst,depVar = "temp.anam")#False: Los datos no presentan anisotropía, no se hace rotación
-#Corrección de la anisotropía
-#Semivariogramas direccionales
-
-x11()
-plot(variog4(temp.geof,max.dist = Dusar), xlab = "Distancia (m)", ylab = "Semivariograma estimado", legend = F)
-legend(locator(1), legend = c(expression(0*degree), expression(45*degree), expression(90*degree), expression(135*degree)), col = 1:4, lty = 1:4)
-title("Semivariograma en distintas direcciones")
 
 
 #------------------------------------------ AN?LISIS DE TENDENCIA -----------------------------------------------------
@@ -166,6 +156,28 @@ Modelt1<-lm(temp.anam~Altura+Dist_mar+Humedad+Este+Norte,data=Bd_datostemp)
 summary(Modelt1)
 MM<-stepAIC(Modelt1,direction = "both")
 summary(MM)
+Modelt1<-lm(temp.anam~Humedad+Norte,data=Bd_datostemp)
+summary(Modelt1)
+MM<-stepAIC(Modelt1,direction = "both")
+summary(MM)
+
+
+# -------------------------------------------ANISOTROPÍA-------------------------------------------------------
+Dmax<-sqrt((max(Bd_datostemp[, 7])-min(Bd_datostemp[,7]))^2+(max(Bd_datostemp[,8])-min(Bd_datostemp[,8]))^2)
+Dusar<-Dmax/2
+coordinates(tempnst)=~Este+Norte
+anisotropia<-estimateAnisotropy(tempnst,depVar = "temp.anam")#False: Los datos no presentan anisotropía, no se hace rotación
+#Corrección de la anisotropía
+
+# -------------------------------------------SEMIVARIOGRAMAS-------------------------------------------------------
+
+#Semivariogramas direccionales
+x11()
+plot(variog4(temp.geof,max.dist = Dusar), xlab = "Distancia (m)", ylab = "Semivariograma estimado", legend = F)
+legend(locator(1), legend = c(expression(0*degree), expression(45*degree), expression(90*degree), expression(135*degree)), col = 1:4, lty = 1:4)
+title("Semivariograma en distintas direcciones")
+
+
 #Residuales y Test de Normalidad 
 residuales<-residuals(MM)
 shapiro.test(residuales)
@@ -238,6 +250,9 @@ sph.ml
 #Meseta=1.7564
 #Rango=100000
 
+
+
+
 #---------------------------------------------Predicción espacial Kriging Simple------------------------------------------
 #Predicción en un punto del espacio
 mu<-mean(temp.anam)
@@ -295,7 +310,7 @@ tempko_pred = anam.y2z(Tempko.inv.anam.db,names="V3",anam = croacia.anam.fit )
 temp.ko$pred_temp <- tempko_pred@items$Raw.V3
 temp.ko$var_pred<-temp.ko$var1.var
 x11()
-spplot(temp.ko, "pred_temp", main="Temperatura media 05 de Marzo de 2008 \nPredicciones Kriging Simple", col.regions=bpy.colors(100), 
+spplot(temp.ko, "pred_temp", main="Temperatura media 05 de Marzo de 2008 \nPredicciones Kriging Ordinario", col.regions=bpy.colors(100), 
        cuts=50, cex.main=0.2, scales = list(draw =T), xlab="Este (m)", ylab = "Norte (m)", key.space=list(space="right", cex=1))
 x11()
 spplot(temp.ko, "var1.var", main="Temperatura media 05 de Marzo de 2008 \nPredicciones Kriging Simple", col.regions=bpy.colors(100), 
@@ -429,8 +444,9 @@ cv<-gstat.cv(fit.g2)
 criterio.cv(cv)
 
 ######GRILLA PARA LA PREDICCION#######
-proj4string(IDSTA.OV) <- CRS("+proj=tmerc +lat_0=4.59620041666667 +lon_0=-74.0775079166667 +k=1 +x_0=1000000 +y_0=1000000 +ellps=GRS80 +units=m +no_defs")
 
+proj4string(IDSTA.OV) <- CRS("+proj=tmerc +lat_0=4.59620041666667 +lon_0=-74.0775079166667 +k=1 +x_0=1000000 +y_0=1000000 +ellps=GRS80 +units=m +no_defs")
+library(rgdal)
 Temp.cok <- predict(fit.g2, newdata = IDSTA.OV)
 
 #Transformación inversa de anamorfosis gaussiana para co-kriging ordinario
@@ -452,3 +468,191 @@ x11()
 spplot(Temp.cok, "Temperatura.var", main="Temperatura media 05 de Marzo de 2008 \nPredicciones Kriging Simple", col.regions=bpy.colors(100), 
        cuts=50, cex.main=0.2, scales = list(draw =T), xlab="Este (m)", ylab = "Norte (m)", key.space=list(space="right", cex=1))
 
+##################################################
+########## METODOS DETERMINISTICOS
+
+
+source("funciones/geoestadistica/idw.cv.R")           # Carga idw.cv
+source("funciones/geoestadistica/graph.idw.R")        # Carga graph.idw
+
+library(pryr)
+library(geospt)
+library(sp)
+library(gstat)
+library(fields)
+library(maptools)
+
+
+#############Optimizaci�n de P
+p.optimo <- function(p, formula, locations, data, newdata, nmax, nmin, maxdist, var.reg){
+  idw.pred <- as.data.frame(matrix(NA,nrow= nrow(data), ncol=4))
+  colnames(idw.pred) <- c("x","y","var1.pred","var1.var")
+  for(i in 1:(nrow(data))){
+    idw.pred[i,] <- idw(formula, locations, da[-i,], newdata[i,], nmax, nmin, maxdist, idp=p)
+  } 
+  RMSPE <-  sqrt(sum((idw.pred$var1.pred-var.reg)^2)/nrow(da))
+  RMSPE
+}
+
+croaciaf<-na.omit(croacia,cols=LST2008_03_05)
+croaciap<-croaciaf
+coordinates(croaciap) = c("x", "y")
+
+SpatialPoints(coordinates(croaciap))
+xy <- croaciap[4:5] #Se toman las coordenadas xy
+x <-croaciaf$x
+y <-croaciaf$y
+z <- croaciap$Temperatura #Variable respuesta
+da = data.frame(xy, z)
+
+#se halla el p optimo
+P <- optimize(p.optimo, c(0,10), formula=z~x+y, locations=~x+y, data=da, newdata=da, nmax=10, nmin=10, maxdist=Inf, var.reg=z)
+P
+rmspeIDW<-P$objective
+
+library(geosptdb)
+#se crea un borde para la representacion de IDW
+
+data(croatia)
+data(croatiadb)
+
+croatia.jan <- croatiadb[croatiadb$t==1,c(1:2,4)]
+coordinates(croatia.jan) <- ~x+y
+pts <- spsample(croatia, n=70000, type="regular")
+
+
+#Se calcula idw con el p optimo minimo
+pron.idw <- idw(z~ 1, ~ x+y,croaciaf, ptos, nmax=10, nmin=10, idp=P$objective) 
+
+max(pron.idw$var1.pred)
+min(pron.idw$var1.pred)
+l2 = list("sp.points", ptos, pch = 3, col="grey")
+gridded(pron.idw) <- TRUE
+x11()
+spplot(pron.idw["var1.pred"], cuts=40, main="Temperatura de Croacia Predicciones IDW", xlab="Este (m)", ylab = "Norte (m)", scales = list(draw =T), col.regions
+       =bpy.colors(100), key.space=list(space="right", cex=0.8))
+
+
+#########################################################################################
+##############                  M�TODOS DETERMINISTICOS:                  ###############
+##############                  FUNCIONES DE BASE RADIAL                  ###############
+#########################################################################################
+
+library(geospt)
+
+nuevo<-expand.grid(x=seq(min(croaciap$x),max(croaciap$x),1000),y=seq(min(croaciap$y),max(croaciap$y),1000))
+
+croaciap<-croaciaf
+coordinates(croaciap) = c("x", "y")
+#######Gaussiana
+graph.rbf(temp~x+y,croaciap,eta.opt = TRUE,rho.opt = T,func = "GAU",iter = 100,n.neigh = 10,eta.dmax = 3,rho.dmax = 3)
+pred.rbfst <- rbf(temp~x+y,croaciap, eta=0.4995000266507, rho=0.700005162362853, newdata=nuevo,n.neigh=10, func="GAU") 
+#RMSPE = 2.00145620108558  
+
+
+#######Exponencial
+graph.rbf(temp~x+y,croaciap,eta.opt = TRUE,rho.opt = T,func = "EXPON",iter = 100,n.neigh = 10,eta.dmax = 3,rho.dmax = 3)
+pred.rbfst <- rbf(temp~x+y,croaciap, eta=0.4995000266507, rho=0.700005162362853, newdata=nuevo,n.neigh=10, func="EXPON") 
+#RMSPE = 2.00145620108558 
+
+
+#######Trigonometrica
+graph.rbf(temp~x+y,croaciap,eta.opt = TRUE,rho.opt = T,func = "TRI",iter = 100,n.neigh = 10,eta.dmax = 3,rho.dmax = 3)
+pred.rbfst <- rbf(temp~x+y,croaciap, eta=0.355978766640932, rho=0.410211044197487, newdata=nuevo,n.neigh=10, func="TRI") 
+#RMSPE = 18.1872539963649 
+
+
+####TPS 
+graph.rbf(temp~x+y,croaciap,eta.opt = TRUE,rho.opt = T,func = "TPS",iter = 100,n.neigh = 10,eta.dmax = 3,rho.dmax = 3)
+pred.rbftps <- rbf(temp~x+y,croaciap, eta=3, rho=2.99998396106861, newdata=nuevo,n.neigh=10, func="TPS")
+# RMSPE   =  2.446634 
+
+
+####Multicuadratica
+graph.rbf(temp~x+y,croaciap,eta.opt = TRUE,rho.opt = T,func = "M",iter = 100,n.neigh = 10,eta.dmax = 3,rho.dmax = 3)
+pred.rbf <- rbf(temp~x+y,croaciap, eta=0.00001, rho=0, newdata=nuevo,n.neigh=10, func="M")
+#RMSPE=1.83891709083613 
+
+######Multicuadratica inversa
+graph.rbf(temp~x+y,croaciap,eta.opt = TRUE,rho.opt = T,func = "IM",iter = 100,n.neigh = 10,eta.dmax = 3,rho.dmax = 3)
+pred.rbfim <- rbf(temp~x+y,croaciap, eta=3, rho=0, newdata=nuevo,n.neigh=10, func="IM") 
+#RMSPE = 2.001274 
+
+
+#########Spline con tension
+graph.rbf(temp~x+y,croaciap,eta.opt = TRUE,rho.opt = T,func = "ST",iter = 100,n.neigh = 10,eta.dmax = 3,rho.dmax = 3)
+pred.rbfst <- rbf(temp~x+y,croaciap, eta=0.000821875426906453, rho=0.51826411453105, newdata=nuevo,n.neigh=10, func="ST") 
+#RMSPE= 1.75452499784975 
+
+####spline completamente regularizada
+graph.rbf(temp~x+y,croaciap,e
+          ta.opt = TRUE,rho.opt = T,func = "CRS",iter = 100,n.neigh = 10,eta.dmax = 3,rho.dmax = 3)
+pred.rbfst <- rbf(temp~x+y,croaciap, eta=0.000715758360255554, rho=0.402773505729523, newdata=ptos,n.neigh=10, func="CRS")
+#RMSPE=1.75264057321989 
+
+
+#########Spline completamente regularizada TIENE MEJOR EL RMSPE se realiza pronostico error en el mapa 
+
+library(geosptdb)
+data(croatia)
+data(croatiadb)
+
+croatia.jan <- croatiadb[croatiadb$t==1,c(1:2,4)]
+coordinates(croatia.jan) <- ~x+y
+
+graph.rbf(temp~x+y,croaciap,eta.opt = TRUE,rho.opt = T,func = "CRS",iter = 100,n.neigh = 10,eta.dmax = 3,rho.dmax = 3)
+
+# prediction case a grid of points
+pts <- spsample(croatia, n=70000, type="regular")
+pred.rbfst <- rbf(croaciap$temp~croaciap$x+croaciap$y,croatia.jan, eta=0.000715758360255554, rho=0.402773505729523, newdata=ptos,n.neigh=10, func="CRS")
+coordinates(pred.rbfst) = c("x", "y")
+gridded(pred.rbfst) <- TRUE
+x11()
+spplot(pred.rbfst["var1.pred"], cuts=40, main="Temperatura de Croacia Predicciones CRS", xlab="Este (m)", ylab = "Norte (m)", scales = list(draw =T), col.regions
+       =bpy.colors(100), key.space=list(space="right", cex=0.8))
+
+
+
+###############################################################################
+###########################     DISE�O DE RED     #############################
+###############################################################################
+
+assign("network.design",
+       function(formula, model, npoint.x, npoint.y, npoints, boundary=NULL, mu, type="regular", ...){
+         if (is.null(boundary)) {
+           grid.p<-expand.grid(x=seq(min(x),max(x),(max(x)-min(x))/npoint.x), y=seq(min(y),max(y),(max(y)-min(y))/npoint.y))
+           plot(grid.p,pch=19,cex=0.5)
+           grid.p$z <- grid.p$x
+         }
+         else if (is.null(boundary)==FALSE) {
+           df.pts<-spsample(boundary, n=npoints, type=type)
+           plot(boundary,axes=T,border="Blue",main="Dise�o de Red basado en ASEPE")
+           points(df.pts,pch=19,cex=0.5)
+           grid.p <- data.frame(df.pts,df.pts@coords[,1])
+           names(grid.p) <- c("x","y","z")
+         }
+         K = krige.cv(formula, ~x+y, grid.p, model, ...)
+         ASEPE <- mean((K[,2])^0.5)             
+         ASEPE
+       }
+)
+
+x <- 0:10
+y<- 0:10
+
+vgm2<-vgm(psill=1.8, model="Sph", range=100000,nugget=0.1)
+
+vgm2 <- vgm(Sph.ols$psill[2], "Sph", Sph.ols$range[2], Sph.ols$psill[1])
+x11()
+NDP1 <- network.design(x~x+y,model=vgm2, npoints=70, boundary=croatia, nmax=6, type="stratified")
+x11()
+NDP2 <- network.design(x~x+y,model=vgm2, npoints=140, boundary=croatia, nmax=6, type="stratified")
+x11()
+NDP3 <- network.design(x~x+y,model=vgm2, npoints=210, boundary=croatia, nmax=6, type="stratified")
+x11()
+NDP4 <- network.design(x~x+y,model=vgm2, npoints=280, boundary=croatia, nmax=6, type="stratified")
+
+
+Networks.P <- rbind(NDP1,NDP2,NDP3,NDP4)
+colnames(Networks.P) <- c("ASEPE")
+Networks.P
